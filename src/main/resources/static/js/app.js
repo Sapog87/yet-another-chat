@@ -1,25 +1,21 @@
-function getCookie(cname) {
-    let name = cname + "=";
-    let ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return null;
-}
-
+let peerId = 2
+let peers = {}
 let stompClient = null;
+let connectionStatus = false
 
-function setConnected(connected) {
+const setConnected = (connected) => {
 
 }
 
-function connect() {
+const handleUpdate = (json) => {
+    printMessage(JSON.stringify(json));
+}
+
+const handleError = (json) => {
+    printMessage(JSON.stringify(json));
+}
+
+const connect = () => {
     stompClient = new StompJs.Client({
         brokerURL: 'ws://localhost:8080/ws',
         connectHeaders: {
@@ -29,20 +25,15 @@ function connect() {
     stompClient.onConnect = (frame) => {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/user/chat/message', (greeting) => {
-            showGreeting(JSON.stringify(JSON.parse(greeting.body)));
+        stompClient.subscribe('/user/topic/update', (update) => {
+            handleUpdate(JSON.parse(update.body));
         });
-        stompClient.subscribe('/user/chat/history', (greeting) => {
-            showGreeting(JSON.stringify(JSON.parse(greeting.body)));
-        });
-        stompClient.subscribe('/user/chat/status', (greeting) => {
-            showGreeting(JSON.stringify(JSON.parse(greeting.body)));
-        });
-        stompClient.subscribe('/user/chat/update', (greeting) => {
-            showGreeting(JSON.stringify(JSON.parse(greeting.body)));
+        stompClient.subscribe('/user/topic/error', (error) => {
+            handleError(JSON.parse(error.body));
         });
     };
     stompClient.onWebSocketError = (error) => {
+        setConnected(false);
         console.error('Error with websocket', error);
     };
     stompClient.onStompError = (frame) => {
@@ -53,7 +44,7 @@ function connect() {
     stompClient.activate();
 }
 
-function showGreeting(message) {
+function printMessage(message) {
     $("#messages").append(`<p>${message}</p>`);
 }
 
@@ -68,8 +59,6 @@ function handleEnter(event) {
         sendMessage();
     }
 }
-
-let peerId = null
 
 const randomNumber = (min, max) => {
     const scope = max - min + 1;
@@ -93,33 +82,37 @@ const randomString = (min, max, length = 0) => {
     return text;
 };
 
-function sendMessage() {
-    if ($("#messageInput").val().trim() !== "") {
-        stompClient.publish({
-            destination: "/app/chat/message",
-            body: JSON.stringify(
-                {
-                    'text': $("#messageInput").val(),
-                    'peerId': 2,
-                    'randomId': randomLong()
-                })
-        });
-
-        stompClient.publish({
-            destination: "/app/chat/history",
-            body: JSON.stringify(
-                {
-                    'peerId': 2,
-                    'limit': 20
-                })
-        });
-
-        $("#messageInput").val("")
+const sendMessage = () => {
+    if (peerId != null) {
+        const input = $("#messageInput")
+        if (input.val().trim() !== "") {
+            stompClient.publish({
+                destination: "/app/chat/message",
+                body: JSON.stringify(
+                    {
+                        'text': input.val(),
+                        'peerId': peerId,
+                        'randomId': randomLong()
+                    })
+            });
+            input.val("")
+        }
     }
 }
 
-const createChatIfNotExists = (peerId) => {
+const getCookie = (cname) => {
+    let name = cname + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return null;
 }
-
 
 connect()
