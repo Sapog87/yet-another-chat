@@ -50,28 +50,31 @@ public class MessagingServiceImpl implements MessagingService {
         var peerId = sendMessageDto.getPeerId();
         var user = userService.findUserByUsername(sender.getName());
 
-        Chat chat;
+        var chat = getOrCreateChat(peerId, user);
+
+        var message = messageService.createMessage(user, chat, sendMessageDto.getText());
+
+        var members = userService.findChatMembers(chat);
+        publishMessageReceivedEvent(message, members, peerId, user);
+
+        return getMessageDto(peerId, message, true);
+    }
+
+    private Chat getOrCreateChat(Long peerId, User user) {
         try {
             // если peerId > 0 => попытка отправить сообщение пользователю с id = peerId
             // если peerId < 0 => попытка отправить сообщение в групповой чат с id = -peerId
             if (peerId > 0) {
                 var recipient = userService.findUserById(peerId);
-                chat = chatService.findOrCreatePersonalChat(user, recipient);
+                return chatService.findOrCreatePersonalChat(user, recipient);
             } else if (peerId < 0) {
                 var chatId = Math.abs(peerId);
-                chat = getGroup(chatId, user);
-            } else {
-                throw new InvalidPeerException();
+                return getGroup(chatId, user);
             }
+            throw new InvalidPeerException(INVALID_PEER);
         } catch (UserNotFoundException | ChatNotFoundException e) {
-            throw new InvalidPeerException(e);
+            throw new InvalidPeerException(INVALID_PEER, e);
         }
-
-        var message = messageService.createMessage(user, chat, sendMessageDto.getText());
-        var members = userService.findChatMembers(chat);
-        publishMessageReceivedEvent(message, members, peerId, user);
-
-        return getMessageDto(peerId, message);
     }
 
     /**
@@ -85,25 +88,32 @@ public class MessagingServiceImpl implements MessagingService {
         var peerId = fetchHistoryDto.getPeerId();
         var user = userService.findUserByUsername(sender.getName());
 
-        Chat chat;
+        var chat = getChatToFetchHistory(peerId, user);
+
+        var messages = getMessages(fetchHistoryDto, chat);
+        return messages.stream()
+                .map(message ->
+                        message.getSender().equals(user) ?
+                                getMessageDto(peerId, message, true) :
+                                getMessageDto(peerId, message, false)
+                ).toList();
+    }
+
+    private Chat getChatToFetchHistory(Long peerId, User user) {
         try {
             // если peerId > 0 => попытка получить историю сообщений с пользователем с id = peerId
             // если peerId < 0 => попытка получить историю сообщений из группового чат с id = -peerId
             if (peerId > 0) {
                 var recipient = userService.findUserById(peerId);
-                chat = chatService.findPersonalChat(user, recipient);
+                return chatService.findPersonalChat(user, recipient);
             } else if (peerId < 0) {
                 var chatId = Math.abs(peerId);
-                chat = getGroup(chatId, user);
-            } else {
-                throw new InvalidPeerException();
+                return getGroup(chatId, user);
             }
+            throw new InvalidPeerException(INVALID_PEER);
         } catch (UserNotFoundException | ChatNotFoundException e) {
             throw new InvalidPeerException(INVALID_PEER, e);
         }
-
-        var messages = getMessages(fetchHistoryDto, chat);
-        return messages.stream().map(m -> getMessageDto(peerId, m)).toList();
     }
 
     private Chat getGroup(Long chatId, User user) {
@@ -122,7 +132,7 @@ public class MessagingServiceImpl implements MessagingService {
                 .filter(recipient -> !sender.equals(recipient))
                 .map(User::getUsername).toList();
 
-        var messageDto = getMessageDto(peerId, message);
+        var messageDto = getMessageDto(peerId, message, false);
 
         eventPublisher.publishEvent(
                 MessageReceivedEvent.builder()
@@ -142,13 +152,14 @@ public class MessagingServiceImpl implements MessagingService {
         return messageRepository.findMessagesByChatOrderByIdDesc(chat, jpaLimit);
     }
 
-    private MessageDto getMessageDto(Long peerId, Message message) {
+    private MessageDto getMessageDto(Long peerId, Message message, Boolean outgoing) {
         return MessageDto.builder()
                 .id(message.getId())
                 .peerId(peerId)
                 .text(message.getText())
                 .createdAt(message.getCreatedAt())
                 .senderName(message.getSender().getName())
+                .outgoing(outgoing)
                 .build();
     }
 }
