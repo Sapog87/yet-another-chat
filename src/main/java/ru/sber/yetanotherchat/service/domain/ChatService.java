@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sber.yetanotherchat.entity.Chat;
 import ru.sber.yetanotherchat.entity.User;
 import ru.sber.yetanotherchat.entity.UserChat;
-import ru.sber.yetanotherchat.exception.ChatAlreadyExistsException;
 import ru.sber.yetanotherchat.exception.ChatNotFoundException;
 import ru.sber.yetanotherchat.repository.ChatRepository;
 import ru.sber.yetanotherchat.repository.UserChatRepository;
@@ -88,9 +87,6 @@ public class ChatService {
      */
     @Transactional
     public Chat createGroupChat(User user, String name) {
-        if (chatRepository.existsChatByGroupChatName(name)) {
-            throw new ChatAlreadyExistsException();
-        }
         var chat = new Chat();
         chat.setIsGroup(true);
         chat.setMembers(Set.of(user));
@@ -98,7 +94,7 @@ public class ChatService {
         return chatRepository.save(chat);
     }
 
-    public List<Chat> findAllChatsByName(String name) {
-        return chatRepository.findChatByGroupChatNameContainingIgnoreCase(name);
+    public List<Chat> findAllGroupsByName(String name) {
+        return chatRepository.findChatByGroupChatNameContainingIgnoreCaseAndIsGroup(name, true);
     }
 }

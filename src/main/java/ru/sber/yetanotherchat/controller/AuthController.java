@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.sber.yetanotherchat.dto.UserRegistrationDto;
 import ru.sber.yetanotherchat.exception.UserAlreadyExistsException;
-import ru.sber.yetanotherchat.service.UserRegistrationService;
+import ru.sber.yetanotherchat.service.AccountService;
 
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
-    private final UserRegistrationService userService;
+    private final AccountService userService;
 
     @GetMapping("/signup")
     public String signup(Model model) {
@@ -31,7 +31,7 @@ public class AuthController {
             return "redirect:/signup?error";
         }
 
-        return "redirect:/login";
+        return "forward:/login";
     }
 
     @GetMapping(path = "/login")

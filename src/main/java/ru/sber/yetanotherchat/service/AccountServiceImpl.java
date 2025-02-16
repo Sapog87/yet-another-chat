@@ -9,16 +9,19 @@ import ru.sber.yetanotherchat.dto.UserRegistrationDto;
 import ru.sber.yetanotherchat.entity.User;
 import ru.sber.yetanotherchat.exception.UserAlreadyExistsException;
 import ru.sber.yetanotherchat.repository.UserRepository;
+import ru.sber.yetanotherchat.service.domain.UserService;
 
+import java.util.List;
 import java.util.Set;
 
 import static ru.sber.yetanotherchat.exception.ErrorMessages.USER_ALREADY_EXISTS;
 
 @Service
 @RequiredArgsConstructor
-public class UserRegistrationServiceImpl implements UserRegistrationService {
+public class AccountServiceImpl implements AccountService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -40,5 +43,17 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                 .username(createdUser.getUsername())
                 .name(createdUser.getName())
                 .build();
+    }
+
+    @Override
+    public List<UserDto> getUsersByName(String name) {
+        var users = userService.findAllUsersByName(name);
+
+        return users.stream().map(user -> UserDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .name(user.getName())
+                .build()
+        ).toList();
     }
 }

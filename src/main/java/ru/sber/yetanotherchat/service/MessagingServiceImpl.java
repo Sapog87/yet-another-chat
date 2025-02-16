@@ -1,7 +1,6 @@
 package ru.sber.yetanotherchat.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,6 @@ import java.util.List;
 import static ru.sber.yetanotherchat.exception.ErrorMessages.INVALID_PEER;
 import static ru.sber.yetanotherchat.exception.ErrorMessages.PEER_ACCESS_DENIED;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessagingServiceImpl implements MessagingService {

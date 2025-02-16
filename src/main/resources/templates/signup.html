@@ -2,18 +2,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link th:href="@{/css/auth.css}" type="text/css" rel="stylesheet"/>
     <title>Sign up</title>
 </head>
 <body>
 <div th:fragment="content">
-    <form name="f" th:action="@{/signup}" th:object="${user}" method="post">
-        <h2>Please sign in</h2>
-        <div th:if="${param.error}" class="alert alert-error">
+    <form class="default-form" name="f" th:action="@{/signup}" th:object="${user}" method="post">
+        <h2>Please sign up</h2>
+        <div th:if="${param.error}" class="alert alert-danger">
             User already exists.
         </div>
         <p>
-            <label for="name" class="name">Name</label>
-            <input th:field="*{name}" type="text" id="name" name="name" placeholder="name" required="" autofocus="">
+            <label for="name" class="name"></label>
+            <input th:field="*{name}" type="text" id="name" name="name" placeholder="Name" required="" autofocus="">
         </p>
         <p>
             <label for="username" class="screenreader">Username</label>
@@ -25,7 +26,10 @@
                    required="">
         </p>
         <button type="submit" class="primary">Sign up</button>
+
+        <a href="/login">login?</a>
     </form>
+
 </div>
 </body>
 </html>

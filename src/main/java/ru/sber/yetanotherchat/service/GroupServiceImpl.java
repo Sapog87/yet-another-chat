@@ -8,6 +8,7 @@ import ru.sber.yetanotherchat.service.domain.ChatService;
 import ru.sber.yetanotherchat.service.domain.UserService;
 
 import java.security.Principal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,5 +26,16 @@ public class GroupServiceImpl implements GroupService {
                 .name(chat.getGroupChatName())
                 .isGroup(chat.getIsGroup())
                 .build();
+    }
+
+    @Override
+    public List<ChatDto> getGroupsByName(String name) {
+        var groups = chatService.findAllGroupsByName(name);
+        return groups.stream().map(group -> ChatDto.builder()
+                .id(group.getId())
+                .isGroup(group.getIsGroup())
+                .name(group.getGroupChatName())
+                .build()
+        ).toList();
     }
 }

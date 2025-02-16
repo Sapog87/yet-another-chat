@@ -23,5 +23,6 @@ public class MessageEventListener {
                                 event.getMessage()
                         )
                 );
+        log.info("Сообщение отправлено: {}", event);
     }
 }

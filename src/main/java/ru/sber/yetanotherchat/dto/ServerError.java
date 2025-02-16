@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 public class ServerError {
     private String error;
     private String message;
-    private String type;
     private Integer code;
     private LocalDateTime timestamp;
 }

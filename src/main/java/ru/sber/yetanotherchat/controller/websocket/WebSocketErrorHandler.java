@@ -1,5 +1,6 @@
 package ru.sber.yetanotherchat.controller.websocket;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -9,54 +10,57 @@ import ru.sber.yetanotherchat.dto.ServerError;
 import ru.sber.yetanotherchat.exception.AccessDeniedException;
 import ru.sber.yetanotherchat.exception.InvalidPeerException;
 
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
+import static ru.sber.yetanotherchat.exception.ErrorStatuses.BAD_REQUEST;
+import static ru.sber.yetanotherchat.exception.ErrorStatuses.INTERNAL_SERVER_ERROR;
+
 @Slf4j
 @ControllerAdvice(basePackageClasses = WebSocketMessageController.class)
 @SendToUser("/topic/error")
 public class WebSocketErrorHandler {
-    //TODO
-    @MessageExceptionHandler
+    @MessageExceptionHandler(RuntimeException.class)
     public ServerError handleException(RuntimeException e) {
         log.error(e.getMessage(), e);
-//        return Map.of(
-//                "error", "Internal Server Error",
-//                "type", "INTERNAL_SERVER_ERROR",
-//                "code", "500",
-//                "timestamp", LocalDateTime.now().toString()
-//        );
-        return null;
+        return ServerError.builder()
+                .error(INTERNAL_SERVER_ERROR.getText())
+                .code(INTERNAL_SERVER_ERROR.getCode())
+                .timestamp(LocalDateTime.now())
+                .message("Internal Server Error")
+                .build();
     }
 
-    @MessageExceptionHandler
+    @MessageExceptionHandler(InvalidPeerException.class)
     public ServerError handleException(InvalidPeerException e) {
-//        return Map.of(
-//                "error", "Bad Request",
-//                "type", "PEER_ID_INVALID",
-//                "code", "400",
-//                "timestamp", LocalDateTime.now().toString()
-//        );
-        return null;
+        return ServerError.builder()
+                .error(BAD_REQUEST.getText())
+                .code(BAD_REQUEST.getCode())
+                .timestamp(LocalDateTime.now())
+                .message(e.getMessage())
+                .build();
     }
 
-    @MessageExceptionHandler
+    @MessageExceptionHandler(AccessDeniedException.class)
     public ServerError handleException(AccessDeniedException e) {
-//        return Map.of(
-//                "error", "Bad Request",
-//                "type", "ACCESS_DENIED",
-//                "code", "400",
-//                "timestamp", LocalDateTime.now().toString()
-//
-//        );
-        return null;
+        return ServerError.builder()
+                .error(BAD_REQUEST.getText())
+                .code(BAD_REQUEST.getCode())
+                .timestamp(LocalDateTime.now())
+                .message(e.getMessage())
+                .build();
     }
 
-    @MessageExceptionHandler
+    @MessageExceptionHandler(ConstraintViolationException.class)
     public ServerError handleException(ConstraintViolationException e) {
-//        return Map.of(
-//                "error", "Bad Request",
-//                "type", "VALIDATION_ERROR",
-//                "code", "400",
-//                "timestamp", LocalDateTime.now().toString()
-//        );
-        return null;
+        String violation = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining());
+        return ServerError.builder()
+                .error(BAD_REQUEST.getText())
+                .code(BAD_REQUEST.getCode())
+                .timestamp(LocalDateTime.now())
+                .message(violation)
+                .build();
     }
 }

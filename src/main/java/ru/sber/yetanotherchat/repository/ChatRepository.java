@@ -1,10 +1,10 @@
 package ru.sber.yetanotherchat.repository;
 
-import ru.sber.yetanotherchat.entity.Chat;
-import ru.sber.yetanotherchat.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.sber.yetanotherchat.entity.Chat;
+import ru.sber.yetanotherchat.entity.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +20,5 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
                    "AND uc2.user = :user2")
     Optional<Chat> findPersonalChatByUsers(@Param("user1") User user1, @Param("user2") User user2);
 
-    boolean existsChatByGroupChatName(String groupChatName);
-
-    List<Chat> findChatByGroupChatNameContainingIgnoreCase(String name);
+    List<Chat> findChatByGroupChatNameContainingIgnoreCaseAndIsGroup(String groupChatName, Boolean isGroup);
 }
