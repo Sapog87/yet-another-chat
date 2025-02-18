@@ -53,7 +53,8 @@ public class MessagingServiceImpl implements MessagingService {
         var message = messageService.createMessage(user, chat, sendMessageDto.getText());
 
         var members = userService.findChatMembers(chat);
-        publishMessageReceivedEvent(message, members, peerId, user);
+        var reversePeerId = peerId < 0 ? peerId : user.getId();
+        publishMessageReceivedEvent(message, members, reversePeerId, user);
 
         return getMessageDto(peerId, message, true);
     }
@@ -142,7 +143,7 @@ public class MessagingServiceImpl implements MessagingService {
     private List<Message> getMessages(FetchHistoryDto fetchHistoryDto, Chat chat) {
         var limit = fetchHistoryDto.getLimit();
         var offsetId = fetchHistoryDto.getOffsetId();
-        var jpaLimit = limit == 0 ? DEFAULT_LIMIT : Limit.of(limit);
+        var jpaLimit = limit == null || limit < 1 ? DEFAULT_LIMIT : Limit.of(limit);
 
         if (offsetId != null && offsetId > 0) {
             return messageRepository.findMessagesByChatAndIdLessThanOrderByIdDesc(chat, fetchHistoryDto.getOffsetId(), jpaLimit);
