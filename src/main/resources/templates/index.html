@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +9,13 @@
     <link href="/css/index.css" type="text/css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="/js/app.js" defer></script>
 </head>
 <body>
 <main class="content">
     <div class="container p-0">
 
-        <h1 class="h3 mb-3">Messages</h1>
+        <div id="connection"></div>
 
         <div class="card">
             <div class="row g-0">
@@ -23,67 +23,85 @@
 
                     <div class="px-4 d-none d-md-block">
                         <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <input type="text" class="form-control my-3" placeholder="Search...">
+                            <div class="search-box flex-grow-1">
+                                <input id="search-input" type="text" class="form-control my-3" placeholder="Search..."
+                                       onclick="handleSearchClick()"
+                                       oninput="handleSearchInput()"
+                                >
+                                <svg id="cancel-search" class="my-3" style="visibility: hidden" width="24" height="24"
+                                     viewBox="0 0 24 24" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     onclick="handleSearchBlur()"
+                                >
+                                    <line x1="3" y1="3" x2="21" y2="21" stroke="black" stroke-width="2"/>
+                                    <line x1="21" y1="3" x2="3" y2="21" stroke="black" stroke-width="2"/>
+                                </svg>
                             </div>
                         </div>
                     </div>
 
-                    <a href="#" class="list-group-item list-group-item-action border-0">
-                        <div class="badge bg-success float-right">5</div>
-                        <div class="d-flex align-items-start">
-                            <div class="flex-grow-1 ml-3">
-                                Vanessa Tucker
-                                <div class="small"><span class="fas fa-circle chat-online"></span> Online</div>
+                    <hr>
+
+                    <div id="chats" class="chats">
+                        <a th:each="peer: ${peers}" class="list-group-item list-group-item-action border-0" href="#"
+                           th:attr="data-peer-id=${peer.getPeerId()},data-peer-name=${peer.getPeerName()},data-is-member=true"
+                           onclick="handlePeerClick(this)"
+                        >
+                            <div class="d-flex align-items-start">
+                                <div class="flex-grow-1 ml-3">
+                                    <div th:text="${peer.getPeerName()}"></div>
+                                    <div th:if="${peer.getPeerId() > 0}" th:text="${peer.getStatus()}" class="small">
+                                    </div>
+                                    <div th:if="${peer.getPeerId() < 0}" class="small">
+                                        Группа
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div id="search" class="search" hidden>
+                        <div class="category">
+                            <div id="users-category" class="selected" onclick="handleUsersCategoryClick()">
+                                Пользователи
+                            </div>
+                            <div id="group-category" class="not-selected" onclick="handleGroupsCategoryClick()">
+                                Группы
                             </div>
                         </div>
-                    </a>
+                        <div id="search-result" class="search-result">
+
+                        </div>
+                    </div>
+
+
+                    <div class="px-4 d-none d-md-block group-b">
+                        <hr>
+                        <div class="d-flex align-items-center">
+                            <div class="group-box flex-grow-1">
+                                <input id="group-input" type="text" class="form-control my-3"
+                                       placeholder="Group name..."
+                                >
+                                <button class="d-flex" onclick="handleCreateGroup()">Создать группу</button>
+                            </div>
+                        </div>
+                    </div>
 
                     <hr class="d-block d-lg-none mt-1 mb-0">
                 </div>
 
                 <div class="col-12 col-lg-7 col-xl-9">
+
                     <div class="py-2 px-4 border-bottom d-none d-lg-block">
                         <div class="d-flex align-items-center py-1">
                             <div class="flex-grow-1 pl-3">
-                                <strong>Sharon Lessman</strong>
-                            </div>
-                            <div>
-                                <button class="btn btn-light border btn-lg px-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round" class="feather feather-more-horizontal feather-lg">
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="19" cy="12" r="1"></circle>
-                                        <circle cx="5" cy="12" r="1"></circle>
-                                    </svg>
-                                </button>
+                                <strong id="name"></strong>
                             </div>
                         </div>
                     </div>
 
                     <div class="position-relative">
-                        <div class="chat-messages p-4">
-
-                            <div class="chat-message-right pb-4">
-                                <div>
-                                    <div class="text-muted small text-nowrap mt-2">2:33 am</div>
-                                </div>
-                                <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                    <div class="font-weight-bold mb-1">You</div>
-                                    Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                </div>
-                            </div>
-
-                            <div class="chat-message-left pb-4">
-                                <div>
-                                    <div class="text-muted small text-nowrap mt-2">2:34 am</div>
-                                </div>
-                                <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                    <div class="font-weight-bold mb-1">Sharon Lessman</div>
-                                    Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                                </div>
-                            </div>
+                        <div id="chat-messages" class="chat-messages p-4" onscroll="handleSearchOnScroll(this)">
 
                         </div>
                     </div>
@@ -94,7 +112,6 @@
                             <button id="send" class="btn btn-primary">Send</button>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

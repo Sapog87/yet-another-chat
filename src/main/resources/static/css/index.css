@@ -2,6 +2,27 @@ body {
     margin-top: 20px;
 }
 
+.search-box {
+    display: flex;
+}
+
+.category {
+    display: flex;
+    flex-direction: row;
+}
+
+.category .not-selected {
+    flex: 1;
+    background-color: lightgray;
+    text-align: center;
+}
+
+.category .selected {
+    flex: 1;
+    background-color: darkgray;
+    text-align: center;
+}
+
 .chat-online {
     color: #34ce57
 }
@@ -20,6 +41,8 @@ body {
 .chat-message-left, .chat-message-right {
     display: flex;
     flex-shrink: 0;
+    overflow-wrap: anywhere;
+    max-width: 70%;
 }
 
 .chat-message-left {
@@ -47,4 +70,23 @@ body {
 
 .border-top {
     border-top: 1px solid #dee2e6 !important;
+}
+
+.ow-break-word {
+    overflow-wrap: break-word;
+}
+
+.group-b {
+    /*position: absolute;*/
+    /*bottom: 0;*/
+}
+
+.chats {
+    overflow-y: auto;
+    height: 55vh;
+}
+
+.search-result {
+    overflow-y: auto;
+    height: 55vh;
 }
