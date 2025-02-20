@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 import static ru.sber.yetanotherchat.exception.ErrorStatuses.BAD_REQUEST;
 import static ru.sber.yetanotherchat.exception.ErrorStatuses.INTERNAL_SERVER_ERROR;
 
+/**
+ *
+ */
 @Slf4j
 @ControllerAdvice(basePackageClasses = WebSocketMessageController.class)
 @SendToUser("/topic/error")

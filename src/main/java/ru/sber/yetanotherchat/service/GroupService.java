@@ -1,12 +1,39 @@
 package ru.sber.yetanotherchat.service;
 
-import ru.sber.yetanotherchat.dto.ChatDto;
+import ru.sber.yetanotherchat.dto.GroupDto;
 
 import java.security.Principal;
 import java.util.List;
 
+/**
+ *
+ */
 public interface GroupService {
-    ChatDto createGroup(String name, Principal principal);
+    /**
+     * @param name
+     * @param principal
+     * @return
+     */
+    GroupDto createGroup(String name, Principal principal);
 
-    List<ChatDto> getGroupsByName(String name);
+    /**
+     * @param name
+     * @param page
+     * @param pageSize
+     * @param principal
+     * @return
+     */
+    List<GroupDto> getGroupsByName(String name, Integer page, Integer pageSize, Principal principal);
+
+    /**
+     * @param id
+     * @param principal
+     */
+    void participateInGroup(Long id, Principal principal);
+
+    /**
+     * @param chatId
+     * @param principal
+     */
+    void leaveGroup(Long chatId, Principal principal);
 }

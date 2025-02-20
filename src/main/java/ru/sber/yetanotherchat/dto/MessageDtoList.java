@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 @Builder
-public class PeerSearchDto {
-    List<PeerDto> peers;
+public class MessageDtoList {
+    private List<MessageDto> messages;
 }

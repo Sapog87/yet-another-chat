@@ -7,7 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sber.yetanotherchat.dto.UserDto;
 import ru.sber.yetanotherchat.dto.UserRegistrationDto;
 import ru.sber.yetanotherchat.entity.User;
+import ru.sber.yetanotherchat.exception.ResourceNotFoundException;
 import ru.sber.yetanotherchat.exception.UserAlreadyExistsException;
+import ru.sber.yetanotherchat.exception.UserNotFoundException;
 import ru.sber.yetanotherchat.repository.UserRepository;
 import ru.sber.yetanotherchat.service.domain.UserService;
 
@@ -16,6 +18,9 @@ import java.util.Set;
 
 import static ru.sber.yetanotherchat.exception.ErrorMessages.USER_ALREADY_EXISTS;
 
+/**
+ *
+ */
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -23,6 +28,10 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
+    /**
+     * @param userRegistrationDto
+     * @return
+     */
     @Override
     @Transactional
     public UserDto registerUser(UserRegistrationDto userRegistrationDto) {
@@ -45,9 +54,15 @@ public class AccountServiceImpl implements AccountService {
                 .build();
     }
 
+    /**
+     * @param name
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @Override
-    public List<UserDto> getUsersByName(String name) {
-        var users = userService.findAllUsersByName(name);
+    public List<UserDto> getUsersByName(String name, Integer page, Integer pageSize) {
+        var users = userService.findAllUsersByName(name, page, pageSize);
 
         return users.stream().map(user -> UserDto.builder()
                 .id(user.getId())
@@ -55,5 +70,24 @@ public class AccountServiceImpl implements AccountService {
                 .name(user.getName())
                 .build()
         ).toList();
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    public UserDto getUsersById(Long id) {
+        try {
+            var user = userService.findUserById(id);
+
+            return UserDto.builder()
+                    .id(user.getId())
+                    .name(user.getName())
+                    .username(user.getUsername())
+                    .build();
+        } catch (UserNotFoundException e) {
+            throw new ResourceNotFoundException(e.getMessage(), e);
+        }
     }
 }

@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(exclude = {"chats", "messages"})
+@ToString(exclude = {"chats"})
 @Entity
 @Table(name = "app_user")
 public class User {
@@ -31,7 +31,7 @@ public class User {
     @NotBlank
     private String name;
 
-    @Column(name = "login", nullable = false, unique = true, length = Integer.MAX_VALUE)
+    @Column(name = "username", nullable = false, unique = true, length = Integer.MAX_VALUE)
     @NotBlank
     private String username;
 
@@ -55,9 +55,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "chat_id"))
     private Set<Chat> chats = new HashSet<>();
-
-    @OneToMany(mappedBy = "receiver")
-    private Set<UserMessage> messages = new HashSet<>();
 
     public enum Role {
         USER,

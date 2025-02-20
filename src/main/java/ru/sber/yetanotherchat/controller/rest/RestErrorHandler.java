@@ -1,21 +1,23 @@
 package ru.sber.yetanotherchat.controller.rest;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.sber.yetanotherchat.dto.ServerError;
 import ru.sber.yetanotherchat.exception.AccessDeniedException;
 import ru.sber.yetanotherchat.exception.InvalidPeerException;
+import ru.sber.yetanotherchat.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
-import static ru.sber.yetanotherchat.exception.ErrorStatuses.BAD_REQUEST;
-import static ru.sber.yetanotherchat.exception.ErrorStatuses.INTERNAL_SERVER_ERROR;
+import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
 
+/**
+ *
+ */
 @Slf4j
 @RestControllerAdvice(
         basePackageClasses = {
@@ -24,18 +26,15 @@ import static ru.sber.yetanotherchat.exception.ErrorStatuses.INTERNAL_SERVER_ERR
                 UserController.class
         })
 public class RestErrorHandler {
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ServerError> handleException(ConstraintViolationException e) {
-        String violation = e.getConstraintViolations().stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ServerError> handleException(MethodArgumentNotValidException e) {
         return ResponseEntity
                 .badRequest()
                 .body(ServerError.builder()
                         .error(BAD_REQUEST.getText())
                         .code(BAD_REQUEST.getCode())
                         .timestamp(LocalDateTime.now())
-                        .message(violation)
+                        .message(e.getMessage())
                         .build());
     }
 
@@ -59,6 +58,18 @@ public class RestErrorHandler {
                 .body(ServerError.builder()
                         .error(BAD_REQUEST.getText())
                         .code(BAD_REQUEST.getCode())
+                        .timestamp(LocalDateTime.now())
+                        .message(e.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ServerError> handleException(ResourceNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ServerError.builder()
+                        .error(NOT_FOUND.getText())
+                        .code(NOT_FOUND.getCode())
                         .timestamp(LocalDateTime.now())
                         .message(e.getMessage())
                         .build());

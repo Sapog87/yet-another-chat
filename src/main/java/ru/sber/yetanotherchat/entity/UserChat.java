@@ -12,19 +12,19 @@ import lombok.Setter;
 @Entity
 @Table(name = "app_user_chat")
 public class UserChat {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "app_user_chat_id_gen")
-    @SequenceGenerator(name = "app_user_chat_id_gen", sequenceName = "app_user_chat_id_seq", allocationSize = 1)
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
-    private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @EmbeddedId
+    @EqualsAndHashCode.Include
+    private UserChatId id = new UserChatId();
+
+    @MapsId("userId")
+    @ManyToOne
     @JoinColumn(name = "user_id")
     @NotNull
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("chatId")
+    @ManyToOne
     @JoinColumn(name = "chat_id")
     @NotNull
     private Chat chat;

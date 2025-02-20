@@ -4,15 +4,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import ru.sber.yetanotherchat.service.PeerService;
 
 import java.security.Principal;
 
+/**
+ *
+ */
 @Controller
 @RequiredArgsConstructor
 public class MainController {
+    private final PeerService peerService;
 
     @GetMapping
     public String index(Model model, Principal principal) {
+        var peers = peerService.getAllChats(principal);
+        model.addAttribute("peers", peers);
 
         return "index";
     }

@@ -1,5 +1,6 @@
 package ru.sber.yetanotherchat.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,8 +18,8 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
                    "JOIN UserChat uc2 ON c = uc2.chat " +
                    "WHERE c.isGroup = false " +
                    "AND uc1.user = :user1 " +
-                   "AND uc2.user = :user2")
+                   "AND uc2.user = :user2 ")
     Optional<Chat> findPersonalChatByUsers(@Param("user1") User user1, @Param("user2") User user2);
 
-    List<Chat> findChatByGroupChatNameContainingIgnoreCaseAndIsGroup(String groupChatName, Boolean isGroup);
+    List<Chat> findChatByGroupChatNameContainingIgnoreCaseAndIsGroup(String groupChatName, Boolean isGroup, Pageable pageable);
 }

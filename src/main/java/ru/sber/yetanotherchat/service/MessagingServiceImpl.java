@@ -12,10 +12,7 @@ import ru.sber.yetanotherchat.dto.SendMessageDto;
 import ru.sber.yetanotherchat.entity.Chat;
 import ru.sber.yetanotherchat.entity.Message;
 import ru.sber.yetanotherchat.entity.User;
-import ru.sber.yetanotherchat.exception.AccessDeniedException;
-import ru.sber.yetanotherchat.exception.ChatNotFoundException;
-import ru.sber.yetanotherchat.exception.InvalidPeerException;
-import ru.sber.yetanotherchat.exception.UserNotFoundException;
+import ru.sber.yetanotherchat.exception.*;
 import ru.sber.yetanotherchat.repository.MessageRepository;
 import ru.sber.yetanotherchat.service.domain.ChatService;
 import ru.sber.yetanotherchat.service.domain.MessageService;
@@ -27,6 +24,9 @@ import java.util.List;
 import static ru.sber.yetanotherchat.exception.ErrorMessages.INVALID_PEER;
 import static ru.sber.yetanotherchat.exception.ErrorMessages.PEER_ACCESS_DENIED;
 
+/**
+ *
+ */
 @Service
 @RequiredArgsConstructor
 public class MessagingServiceImpl implements MessagingService {
@@ -110,8 +110,10 @@ public class MessagingServiceImpl implements MessagingService {
                 return getGroup(chatId, user);
             }
             throw new InvalidPeerException(INVALID_PEER);
-        } catch (UserNotFoundException | ChatNotFoundException e) {
-            throw new InvalidPeerException(INVALID_PEER, e);
+        } catch (UserNotFoundException e) {
+            throw new InvalidPeerException(e.getMessage(), e);
+        } catch (ChatNotFoundException e) {
+            throw new ResourceNotFoundException(e.getMessage(), e);
         }
     }
 

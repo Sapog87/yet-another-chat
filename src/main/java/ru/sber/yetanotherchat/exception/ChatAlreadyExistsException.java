@@ -1,5 +1,8 @@
 package ru.sber.yetanotherchat.exception;
 
+/**
+ *
+ */
 public class ChatAlreadyExistsException extends RuntimeException {
     public ChatAlreadyExistsException() {
     }

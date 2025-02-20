@@ -1,15 +1,18 @@
 package ru.sber.yetanotherchat.security;
 
 import lombok.RequiredArgsConstructor;
-import ru.sber.yetanotherchat.entity.User;
-import ru.sber.yetanotherchat.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import ru.sber.yetanotherchat.entity.User;
+import ru.sber.yetanotherchat.repository.UserRepository;
 
 import java.util.List;
 
+/**
+ *
+ */
 @RequiredArgsConstructor
 public class DaoUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;

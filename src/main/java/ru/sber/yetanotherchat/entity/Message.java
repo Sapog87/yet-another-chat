@@ -27,7 +27,7 @@ public class Message {
     @NotNull
     private User sender;
 
-    @Column(name = "text", nullable = false)
+    @Column(name = "text", nullable = false, length = Integer.MAX_VALUE)
     @NotBlank
     private String text;
 

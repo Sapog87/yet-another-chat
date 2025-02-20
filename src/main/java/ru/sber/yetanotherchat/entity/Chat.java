@@ -8,7 +8,9 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -24,7 +26,7 @@ public class Chat {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "group_chat_name")
+    @Column(name = "group_chat_name", length = Integer.MAX_VALUE)
     private String groupChatName;
 
     @Column(name = "is_group", nullable = false)
@@ -32,7 +34,7 @@ public class Chat {
     private Boolean isGroup;
 
     @ManyToMany(mappedBy = "chats")
-    private Set<User> members = new HashSet<>();
+    private List<User> members = new ArrayList<>();
 
     @OneToMany(mappedBy = "chat")
     private Set<Message> messages = new HashSet<>();

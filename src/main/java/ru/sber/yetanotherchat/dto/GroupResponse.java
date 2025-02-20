@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PeerDto {
+public class GroupResponse {
     private Long peerId;
-    private String peerName;
-    private Status status;
+    private String name;
+    private Boolean isMember;
 }

@@ -13,6 +13,9 @@ import ru.sber.yetanotherchat.service.MessagingService;
 
 import java.security.Principal;
 
+/**
+ *
+ */
 @Slf4j
 @Controller
 @RequiredArgsConstructor

@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ChatDto {
-    private Long id;
+public class UserResponse {
+    private Long peerId;
     private String name;
-    private Boolean isGroup;
+    private Status status;
 }

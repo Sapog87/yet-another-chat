@@ -1,6 +1,7 @@
 package ru.sber.yetanotherchat.service.domain;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sber.yetanotherchat.entity.Chat;
@@ -11,11 +12,13 @@ import ru.sber.yetanotherchat.repository.ChatRepository;
 import ru.sber.yetanotherchat.repository.UserChatRepository;
 
 import java.util.List;
-import java.util.Set;
 
 import static ru.sber.yetanotherchat.exception.ErrorMessages.CHAT_WITH_SUCH_ID_NOT_EXISTS;
 import static ru.sber.yetanotherchat.exception.ErrorMessages.PERSONAL_CHAT_NOT_EXIST;
 
+/**
+ *
+ */
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -33,7 +36,9 @@ public class ChatService {
                 .orElseGet(() -> {
                     var chat = chatRepository.save(getPersonalChat(user, recipient));
                     userChatRepository.save(getUserChat(user, chat));
-                    userChatRepository.save(getUserChat(recipient, chat));
+                    if (!user.equals(recipient)) {
+                        userChatRepository.save(getUserChat(recipient, chat));
+                    }
                     return chat;
                 });
     }
@@ -60,7 +65,7 @@ public class ChatService {
     private Chat getPersonalChat(User firstUser, User secondUser) {
         var chat = new Chat();
         chat.setIsGroup(false);
-        chat.setMembers(Set.of(firstUser, secondUser));
+        chat.setMembers(List.of(firstUser, secondUser));
         return chat;
     }
 
@@ -87,14 +92,35 @@ public class ChatService {
      */
     @Transactional
     public Chat createGroupChat(User user, String name) {
-        var chat = new Chat();
-        chat.setIsGroup(true);
-        chat.setMembers(Set.of(user));
-        chat.setGroupChatName(name);
-        return chatRepository.save(chat);
+        var chat = chatRepository.save(getGroupChat(user, name));
+        userChatRepository.save(getUserChat(user, chat));
+        return chat;
     }
 
-    public List<Chat> findAllGroupsByName(String name) {
-        return chatRepository.findChatByGroupChatNameContainingIgnoreCaseAndIsGroup(name, true);
+    private Chat getGroupChat(User firstUser, String name) {
+        var chat = new Chat();
+        chat.setIsGroup(true);
+        chat.setMembers(List.of(firstUser));
+        chat.setGroupChatName(name);
+        return chat;
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    public List<Chat> findAllGroupsByName(String name, Integer page, Integer size) {
+        if (page == null || page < 0) page = 0;
+        if (size == null || size < 0) size = 20;
+        return chatRepository.findChatByGroupChatNameContainingIgnoreCaseAndIsGroup(name, true, PageRequest.of(page, size));
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    public List<Chat> findAllChatsByUser(User user) {
+        var chats = userChatRepository.findAllByUser(user);
+        return chats.stream().map(UserChat::getChat).toList();
     }
 }

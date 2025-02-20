@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 @Builder
-public class HistoryDto {
-    private List<MessageDto> messages;
+public class GroupResponseList {
+    private List<GroupResponse> groups;
 }

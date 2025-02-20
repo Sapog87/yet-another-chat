@@ -7,14 +7,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
 import ru.sber.yetanotherchat.dto.MessageReceivedEvent;
 
+/**
+ *
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageEventListener {
     private final SimpMessagingTemplate messagingTemplate;
 
+    /**
+     * @param event
+     */
     @TransactionalEventListener
-    public void sendMessages(MessageReceivedEvent event) {
+    protected void sendMessages(MessageReceivedEvent event) {
         event.getRecipients()
                 .forEach(username ->
                         messagingTemplate.convertAndSendToUser(

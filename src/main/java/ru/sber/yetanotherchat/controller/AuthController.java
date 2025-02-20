@@ -11,6 +11,9 @@ import ru.sber.yetanotherchat.dto.UserRegistrationDto;
 import ru.sber.yetanotherchat.exception.UserAlreadyExistsException;
 import ru.sber.yetanotherchat.service.AccountService;
 
+/**
+ *
+ */
 @Controller
 @RequiredArgsConstructor
 public class AuthController {

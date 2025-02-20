@@ -1,5 +1,8 @@
 package ru.sber.yetanotherchat.exception;
 
+/**
+ *
+ */
 public class AccessDeniedException extends RuntimeException {
     public AccessDeniedException() {
     }
