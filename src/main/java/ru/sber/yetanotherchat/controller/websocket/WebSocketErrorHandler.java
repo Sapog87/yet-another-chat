@@ -7,7 +7,6 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import ru.sber.yetanotherchat.dto.ServerError;
-import ru.sber.yetanotherchat.exception.AccessDeniedException;
 import ru.sber.yetanotherchat.exception.InvalidPeerException;
 
 import java.time.LocalDateTime;
@@ -36,16 +35,6 @@ public class WebSocketErrorHandler {
 
     @MessageExceptionHandler(InvalidPeerException.class)
     public ServerError handleException(InvalidPeerException e) {
-        return ServerError.builder()
-                .error(BAD_REQUEST.getText())
-                .code(BAD_REQUEST.getCode())
-                .timestamp(LocalDateTime.now())
-                .message(e.getMessage())
-                .build();
-    }
-
-    @MessageExceptionHandler(AccessDeniedException.class)
-    public ServerError handleException(AccessDeniedException e) {
         return ServerError.builder()
                 .error(BAD_REQUEST.getText())
                 .code(BAD_REQUEST.getCode())

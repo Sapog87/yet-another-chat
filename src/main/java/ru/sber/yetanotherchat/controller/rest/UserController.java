@@ -48,7 +48,7 @@ public class UserController {
             path = "/users",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<UserResponseList> getUsers(@RequestParam @NotBlank String name,
+    public ResponseEntity<UserResponseList> getUsers(@RequestParam(name = "name") @NotBlank String name,
                                                      @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
                                                      @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer pageSize,
                                                      Principal principal) {
@@ -93,7 +93,7 @@ public class UserController {
     public ResponseEntity<UserResponse> getUser(@PathVariable @Positive Long peerId,
                                                 Principal principal) {
         log.info("Запрос на поиск пользователей с id = {} от пользователя {}", peerId, principal.getName());
-        var userDto = accountService.getUsersById(peerId);
+        var userDto = accountService.getUserById(peerId);
 
         return ResponseEntity
                 .ok(UserResponse.builder()

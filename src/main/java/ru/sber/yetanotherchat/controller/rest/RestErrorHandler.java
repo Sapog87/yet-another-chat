@@ -1,17 +1,21 @@
 package ru.sber.yetanotherchat.controller.rest;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import ru.sber.yetanotherchat.dto.ServerError;
-import ru.sber.yetanotherchat.exception.AccessDeniedException;
 import ru.sber.yetanotherchat.exception.InvalidPeerException;
-import ru.sber.yetanotherchat.exception.ResourceNotFoundException;
+import ru.sber.yetanotherchat.exception.PeerNotFoundException;
+import ru.sber.yetanotherchat.exception.UnreachablePeerException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Objects;
 
 import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
 
@@ -26,15 +30,32 @@ import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
                 UserController.class
         })
 public class RestErrorHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ServerError> handleException(MethodArgumentNotValidException e) {
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ServerError> handleException(HandlerMethodValidationException e) {
+        var errors = new HashMap<String, String>();
+
+        e.getValueResults().forEach(
+                result -> result.getResolvableErrors()
+                        .forEach(error -> {
+                            String param = (error instanceof ObjectError objectError ?
+                                    objectError.getObjectName() :
+                                    ((MessageSourceResolvable) Objects.requireNonNull(error.getArguments())[0])
+                                            .getDefaultMessage());
+
+                            param = (result.getContainerIndex() != null ?
+                                    param + "[" + result.getContainerIndex() + "]" : param);
+
+                            errors.put(param, error.getDefaultMessage());
+                        })
+        );
+
         return ResponseEntity
                 .badRequest()
                 .body(ServerError.builder()
                         .error(BAD_REQUEST.getText())
                         .code(BAD_REQUEST.getCode())
                         .timestamp(LocalDateTime.now())
-                        .message(e.getMessage())
+                        .message(errors.toString())
                         .build());
     }
 
@@ -63,25 +84,25 @@ public class RestErrorHandler {
                         .build());
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ServerError> handleException(ResourceNotFoundException e) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ServerError.builder()
-                        .error(NOT_FOUND.getText())
-                        .code(NOT_FOUND.getCode())
-                        .timestamp(LocalDateTime.now())
-                        .message(e.getMessage())
-                        .build());
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ServerError> handleException(AccessDeniedException e) {
+    @ExceptionHandler(UnreachablePeerException.class)
+    public ResponseEntity<ServerError> handleException(UnreachablePeerException e) {
         return ResponseEntity
                 .badRequest()
                 .body(ServerError.builder()
                         .error(BAD_REQUEST.getText())
                         .code(BAD_REQUEST.getCode())
+                        .timestamp(LocalDateTime.now())
+                        .message(e.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(PeerNotFoundException.class)
+    public ResponseEntity<ServerError> handleException(PeerNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ServerError.builder()
+                        .error(NOT_FOUND.getText())
+                        .code(NOT_FOUND.getCode())
                         .timestamp(LocalDateTime.now())
                         .message(e.getMessage())
                         .build());

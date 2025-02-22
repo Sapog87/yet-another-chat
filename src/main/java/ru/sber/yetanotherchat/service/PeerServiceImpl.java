@@ -49,7 +49,6 @@ public class PeerServiceImpl implements PeerService {
                             .status(getStatus(user, otherUser))
                             .build();
                 })
-                .distinct()
                 .toList();
     }
 

@@ -41,14 +41,14 @@ public class GroupController {
             path = "/groups",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<GroupResponse> createGroup(@RequestParam("name") @NotBlank String name,
+    public ResponseEntity<GroupResponse> createGroup(@RequestParam(value = "name") @NotBlank String name,
                                                      Principal principal) {
         log.info("Запрос на создание группы с именем {} от пользователя {}", name, principal.getName());
 
         var groupDto = groupService.createGroup(name, principal);
 
         var response = GroupResponse.builder()
-                .peerId(-groupDto.getId())
+                .peerId(groupDto.getId())
                 .name(groupDto.getName())
                 .isMember(groupDto.getIsMember())
                 .build();
@@ -86,7 +86,7 @@ public class GroupController {
         }
 
         var groupDtos = groups.stream().map(group -> GroupResponse.builder()
-                .peerId(-group.getId())
+                .peerId(group.getId())
                 .name(group.getName())
                 .isMember(group.getIsMember())
                 .build()
@@ -111,8 +111,7 @@ public class GroupController {
     )
     public ResponseEntity<Void> participateInGroup(@PathVariable("peerId") @Negative Long peerId, Principal principal) {
         log.info("Запрос на вступление в группу с peerId = {} от пользователя {}", peerId, principal.getName());
-        var id = Math.abs(peerId);
-        groupService.participateInGroup(id, principal);
+        groupService.participateInGroup(peerId, principal);
 
         return ResponseEntity.ok().build();
     }
@@ -129,8 +128,7 @@ public class GroupController {
     )
     public ResponseEntity<Void> leaveGroup(@PathVariable("peerId") @Negative Long peerId, Principal principal) {
         log.info("Запрос на выход из группы с peerId = {} от пользователя {}", peerId, principal.getName());
-        var id = Math.abs(peerId);
-        groupService.leaveGroup(id, principal);
+        groupService.leaveGroup(peerId, principal);
 
         return ResponseEntity.ok().build();
     }

@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -46,8 +48,8 @@ public class MessageController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<MessageDtoList> history(@RequestParam(name = "peerId") @NotZero Long peerId,
-                                                  @RequestParam(name = "offsetId", required = false) Long offsetId,
-                                                  @RequestParam(name = "limit", required = false, defaultValue = "0") Integer limit,
+                                                  @RequestParam(name = "offsetId", required = false) @Positive Long offsetId,
+                                                  @RequestParam(name = "limit", required = false, defaultValue = "0") @PositiveOrZero Integer limit,
                                                   Principal principal) {
         log.info("Запрос на получение истории сообщений c peer = {} от пользователя {}", peerId, principal.getName());
 

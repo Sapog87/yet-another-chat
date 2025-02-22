@@ -21,7 +21,7 @@ public class AuthController {
 
     @GetMapping("/signup")
     public String signup(Model model) {
-        UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+        var userRegistrationDto = new UserRegistrationDto();
         model.addAttribute("user", userRegistrationDto);
         return "signup";
     }

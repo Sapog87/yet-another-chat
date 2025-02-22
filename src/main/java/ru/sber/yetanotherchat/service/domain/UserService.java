@@ -2,6 +2,7 @@ package ru.sber.yetanotherchat.service.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.sber.yetanotherchat.entity.Chat;
 import ru.sber.yetanotherchat.entity.User;
@@ -9,6 +10,7 @@ import ru.sber.yetanotherchat.exception.UserNotFoundException;
 import ru.sber.yetanotherchat.repository.UserRepository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -17,6 +19,30 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    /**
+     * @param username
+     * @param password
+     * @param name
+     * @return
+     */
+    public User createUser(String username, CharSequence password, String name) {
+        var user = new User();
+        user.setName(name);
+        user.setUsername(username);
+        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setRoles(Set.of(User.Role.USER));
+        return userRepository.save(user);
+    }
+
+    /**
+     * @param username
+     * @return
+     */
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
 
     /**
      * @param username

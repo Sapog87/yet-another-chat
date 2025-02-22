@@ -27,5 +27,5 @@ public interface AccountService {
      * @param id
      * @return
      */
-    UserDto getUsersById(Long id);
+    UserDto getUserById(Long id);
 }

@@ -1,22 +1,16 @@
 package ru.sber.yetanotherchat.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sber.yetanotherchat.dto.UserDto;
 import ru.sber.yetanotherchat.dto.UserRegistrationDto;
-import ru.sber.yetanotherchat.entity.User;
-import ru.sber.yetanotherchat.exception.ResourceNotFoundException;
+import ru.sber.yetanotherchat.exception.PeerNotFoundException;
 import ru.sber.yetanotherchat.exception.UserAlreadyExistsException;
 import ru.sber.yetanotherchat.exception.UserNotFoundException;
-import ru.sber.yetanotherchat.repository.UserRepository;
 import ru.sber.yetanotherchat.service.domain.UserService;
 
 import java.util.List;
-import java.util.Set;
-
-import static ru.sber.yetanotherchat.exception.ErrorMessages.USER_ALREADY_EXISTS;
 
 /**
  *
@@ -24,33 +18,30 @@ import static ru.sber.yetanotherchat.exception.ErrorMessages.USER_ALREADY_EXISTS
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
     /**
-     * @param userRegistrationDto
+     * @param dto
      * @return
      */
     @Override
     @Transactional
-    public UserDto registerUser(UserRegistrationDto userRegistrationDto) {
-        if (userRepository.existsByUsername(userRegistrationDto.getUsername())) {
-            throw new UserAlreadyExistsException(USER_ALREADY_EXISTS);
+    public UserDto registerUser(UserRegistrationDto dto) {
+        if (userService.existsByUsername(dto.getUsername())) {
+            throw new UserAlreadyExistsException(
+                    "Пользователь с таким username {%s} уже существует"
+                            .formatted(dto.getUsername()));
         }
 
-        User user = new User();
-        user.setName(userRegistrationDto.getName());
-        user.setUsername(userRegistrationDto.getUsername());
-        user.setPasswordHash(passwordEncoder.encode(userRegistrationDto.getPassword()));
-        user.setRoles(Set.of(User.Role.USER));
-
-        User createdUser = userRepository.save(user);
+        var user = userService.createUser(
+                dto.getUsername(),
+                dto.getPassword(),
+                dto.getName());
 
         return UserDto.builder()
-                .id(createdUser.getId())
-                .username(createdUser.getUsername())
-                .name(createdUser.getName())
+                .id(user.getId())
+                .username(user.getUsername())
+                .name(user.getName())
                 .build();
     }
 
@@ -77,7 +68,7 @@ public class AccountServiceImpl implements AccountService {
      * @return
      */
     @Override
-    public UserDto getUsersById(Long id) {
+    public UserDto getUserById(Long id) {
         try {
             var user = userService.findUserById(id);
 
@@ -87,7 +78,7 @@ public class AccountServiceImpl implements AccountService {
                     .username(user.getUsername())
                     .build();
         } catch (UserNotFoundException e) {
-            throw new ResourceNotFoundException(e.getMessage(), e);
+            throw new PeerNotFoundException(e.getMessage(), e);
         }
     }
 }

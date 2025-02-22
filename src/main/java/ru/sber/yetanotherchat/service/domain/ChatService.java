@@ -13,9 +13,6 @@ import ru.sber.yetanotherchat.repository.UserChatRepository;
 
 import java.util.List;
 
-import static ru.sber.yetanotherchat.exception.ErrorMessages.CHAT_WITH_SUCH_ID_NOT_EXISTS;
-import static ru.sber.yetanotherchat.exception.ErrorMessages.PERSONAL_CHAT_NOT_EXIST;
-
 /**
  *
  */
@@ -50,7 +47,10 @@ public class ChatService {
      */
     public Chat findPersonalChat(User user, User recipient) {
         return chatRepository.findPersonalChatByUsers(user, recipient)
-                .orElseThrow(() -> new ChatNotFoundException(PERSONAL_CHAT_NOT_EXIST));
+                .orElseThrow(() -> new ChatNotFoundException(
+                        "Личного чата между пользователями {%d} и {%d} не существует"
+                                .formatted(user.getId(), recipient.getId()))
+                );
     }
 
     /**
@@ -59,7 +59,10 @@ public class ChatService {
      */
     public Chat findChatById(Long id) {
         return chatRepository.findById(id)
-                .orElseThrow(() -> new ChatNotFoundException(CHAT_WITH_SUCH_ID_NOT_EXISTS));
+                .orElseThrow(() -> new ChatNotFoundException(
+                        "Чата с таким id {%d} не существует"
+                                .formatted(id))
+                );
     }
 
     private Chat getPersonalChat(User firstUser, User secondUser) {
