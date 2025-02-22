@@ -34,14 +34,16 @@ public interface GroupService {
      *
      * @param id        id группы, в которую пользователь хочет вступить
      * @param principal текущий пользователь
+     * @return {@link GroupDto}
      */
-    void participateInGroup(Long id, Principal principal);
+    GroupDto participateInGroup(Long id, Principal principal);
 
     /**
      * Удаляет пользователя иг группы
      *
      * @param id    id группы, из которой пользователь хочет выйти
      * @param principal текущий пользователь
+     * @return {@link GroupDto}
      */
-    void leaveGroup(Long id, Principal principal);
+    GroupDto leaveGroup(Long id, Principal principal);
 }

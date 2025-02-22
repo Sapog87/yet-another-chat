@@ -70,11 +70,12 @@ public class GroupServiceImpl implements GroupService {
      *
      * @param id        id группы, в которую пользователь хочет вступить
      * @param principal текущий пользователь
+     * @return {@link GroupDto}
      * @throws PeerNotFoundException если группа не найдена
      */
     @Override
     @Transactional
-    public void participateInGroup(Long id, Principal principal) {
+    public GroupDto participateInGroup(Long id, Principal principal) {
         var groupId = Math.abs(id);
         var user = userService.findUserByUsername(principal.getName());
         try {
@@ -83,6 +84,11 @@ public class GroupServiceImpl implements GroupService {
                 group.getMembers().add(user);
                 user.getChats().add(group);
             }
+            return GroupDto.builder()
+                    .id(-groupId)
+                    .name(group.getGroupChatName())
+                    .isMember(true)
+                    .build();
         } catch (ChatNotFoundException e) {
             throw new PeerNotFoundException(
                     "Группа с таким id {%d} не найдена"
@@ -105,12 +111,13 @@ public class GroupServiceImpl implements GroupService {
      *
      * @param id        id группы, из которой пользователь хочет выйти
      * @param principal текущий пользователь
+     * @return {@link GroupDto}
      * @throws UnreachablePeerException если не является членом группы
      * @throws PeerNotFoundException    если группа не найдена
      */
     @Override
     @Transactional
-    public void leaveGroup(Long id, Principal principal) {
+    public GroupDto leaveGroup(Long id, Principal principal) {
         var user = userService.findUserByUsername(principal.getName());
         try {
             var groupId = Math.abs(id);
@@ -122,6 +129,11 @@ public class GroupServiceImpl implements GroupService {
             }
             user.getChats().remove(group);
             group.getMembers().remove(user);
+            return GroupDto.builder()
+                    .id(-groupId)
+                    .name(group.getGroupChatName())
+                    .isMember(false)
+                    .build();
         } catch (ChatNotFoundException e) {
             throw new PeerNotFoundException(e.getMessage(), e);
         }

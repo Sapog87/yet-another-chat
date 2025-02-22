@@ -53,15 +53,14 @@ public class GroupController {
 
         var groupDto = groupService.createGroup(name, principal);
 
-        var response = GroupResponse.builder()
-                .peerId(groupDto.getId())
-                .name(groupDto.getName())
-                .isMember(groupDto.getIsMember())
-                .build();
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(response);
+                .body(GroupResponse.builder()
+                        .peerId(groupDto.getId())
+                        .name(groupDto.getName())
+                        .isMember(groupDto.getIsMember())
+                        .build()
+                );
     }
 
     /**
@@ -88,6 +87,7 @@ public class GroupController {
                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer pageSize,
                                                        Principal principal) {
         log.info("Запрос на поиск групп с именем = {} от пользователя {}", name, principal.getName());
+
         var groups = groupService.getGroupsByName(name, page, pageSize, principal);
 
         if (groups.isEmpty()) {
@@ -121,7 +121,7 @@ public class GroupController {
      */
     @Operation(summary = "Вступление в группу")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GroupResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
@@ -129,12 +129,19 @@ public class GroupController {
     @PostMapping(
             path = "/groups/{peerId}/members"
     )
-    public ResponseEntity<Void> participateInGroup(@PathVariable("peerId") @Negative Long peerId,
-                                                   Principal principal) {
+    public ResponseEntity<GroupResponse> participateInGroup(@PathVariable("peerId") @Negative Long peerId,
+                                                            Principal principal) {
         log.info("Запрос на вступление в группу с peerId = {} от пользователя {}", peerId, principal.getName());
-        groupService.participateInGroup(peerId, principal);
 
-        return ResponseEntity.ok().build();
+        var groupDto = groupService.participateInGroup(peerId, principal);
+
+        return ResponseEntity
+                .ok(GroupResponse.builder()
+                        .peerId(groupDto.getId())
+                        .name(groupDto.getName())
+                        .isMember(groupDto.getIsMember())
+                        .build()
+                );
     }
 
     /**
@@ -145,7 +152,7 @@ public class GroupController {
      */
     @Operation(summary = "Выход из группы")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Void.class))),
+            @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GroupResponse.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
             @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
@@ -153,11 +160,18 @@ public class GroupController {
     @DeleteMapping(
             path = "/groups/{peerId}/members"
     )
-    public ResponseEntity<Void> leaveGroup(@PathVariable("peerId") @Negative Long peerId,
-                                           Principal principal) {
+    public ResponseEntity<GroupResponse> leaveGroup(@PathVariable("peerId") @Negative Long peerId,
+                                                    Principal principal) {
         log.info("Запрос на выход из группы с peerId = {} от пользователя {}", peerId, principal.getName());
-        groupService.leaveGroup(peerId, principal);
 
-        return ResponseEntity.ok().build();
+        var groupDto = groupService.leaveGroup(peerId, principal);
+
+        return ResponseEntity
+                .ok(GroupResponse.builder()
+                        .peerId(groupDto.getId())
+                        .name(groupDto.getName())
+                        .isMember(groupDto.getIsMember())
+                        .build()
+                );
     }
 }
