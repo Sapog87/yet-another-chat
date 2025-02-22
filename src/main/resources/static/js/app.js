@@ -344,10 +344,10 @@ async function leaveGroupRequest() {
         document.getElementById("name").innerText = ""
         document.getElementById("chat-messages").innerText = ""
         document.getElementById("chats").querySelector(`[data-peer-id="${peerId}"]`).remove()
+        peers[peerId] = null
         peerId = null
         offsetId = null
         notEnd = false
-        peers[peerId] = null
     }
 }
 
