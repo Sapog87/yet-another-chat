@@ -127,7 +127,8 @@ class GroupControllerTest {
     @Test
     @DisplayName("Вступление в группу")
     void participateInGroup() throws Exception {
-        doNothing().when(groupService).participateInGroup(any(), any(Principal.class));
+        var groupDto = GroupDto.builder().id(-1L).isMember(true).name("test1").build();
+        doReturn(groupDto).when(groupService).participateInGroup(any(), any(Principal.class));
 
         mockMvc.perform(post("/api/groups/{id}/members", -1L))
                 .andExpect(status().isOk());
@@ -159,7 +160,8 @@ class GroupControllerTest {
     @Test
     @DisplayName("Выход из группы")
     void leaveGroup() throws Exception {
-        doNothing().when(groupService).leaveGroup(any(), any(Principal.class));
+        var groupDto = GroupDto.builder().id(-1L).isMember(true).name("test1").build();
+        doReturn(groupDto).when(groupService).leaveGroup(any(), any(Principal.class));
 
         mockMvc.perform(delete("/api/groups/{id}/members", -1L))
                 .andExpect(status().isOk());
