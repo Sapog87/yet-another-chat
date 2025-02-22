@@ -26,7 +26,7 @@ import static ru.sber.yetanotherchat.dto.Status.OFFLINE;
 import static ru.sber.yetanotherchat.dto.Status.ONLINE;
 
 /**
- *
+ * Контроллер для управления пользователями.
  */
 @Slf4j
 @RestController
@@ -37,6 +37,14 @@ public class UserController {
     private final StatusService statusService;
 
 
+    /**
+     * Поиск пользователей по имени или его части с поддержкой пагинации.
+     *
+     * @param name      Имя пользователя (не может быть пустым).
+     * @param page      Номер страницы (по умолчанию 0).
+     * @param pageSize  Размер страницы (по умолчанию 20).
+     * @param principal Текущий пользователь.
+     */
     @Operation(summary = "Поиск пользователей")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserResponseList.class))),
@@ -79,6 +87,12 @@ public class UserController {
                 );
     }
 
+    /**
+     * Поиск пользователя по id.
+     *
+     * @param peerId    Идентификатор пользователя (должен быть положительным).
+     * @param principal Информация о текущем пользователе.
+     */
     @Operation(summary = "Поиск пользователя по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserResponse.class))),

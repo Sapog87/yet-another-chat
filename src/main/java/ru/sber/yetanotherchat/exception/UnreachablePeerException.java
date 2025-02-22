@@ -1,5 +1,8 @@
 package ru.sber.yetanotherchat.exception;
 
+/**
+ * Исключение, которое выбрасывается, когда указанный peer недоступен.
+ */
 public class UnreachablePeerException extends RuntimeException {
     public UnreachablePeerException() {
     }

@@ -1,7 +1,7 @@
 package ru.sber.yetanotherchat.exception;
 
 /**
- *
+ * Исключение, которое выбрасывается, когда пользователь не найден.
  */
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException() {

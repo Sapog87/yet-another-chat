@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.socket.EnableWebSocket
 import org.springframework.security.messaging.access.intercept.MessageMatcherDelegatingAuthorizationManager;
 
 /**
- *
+ * Конфигурация фильтров Spring Security для Websocket-запросов
  */
 @Configuration
 @EnableWebSocketSecurity

@@ -6,34 +6,42 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- *
+ * Интерфейс сервиса для работы с группами чатов.
  */
 public interface GroupService {
     /**
-     * @param name
-     * @param principal
-     * @return
+     * Создает новый групповой чат с указанным названием.
+     *
+     * @param name      название группы
+     * @param principal текущий пользователь, который создает группу
+     * @return {@link GroupDto}
      */
     GroupDto createGroup(String name, Principal principal);
 
     /**
-     * @param name
-     * @param page
-     * @param pageSize
-     * @param principal
-     * @return
+     * Получает список групп с указанным именем или его частью с пагинацией.
+     *
+     * @param name      название группы для поиска
+     * @param page      страница для пагинации
+     * @param pageSize  размер страницы для пагинации
+     * @param principal текущий пользователь для проверки членства
+     * @return {@link List<GroupDto>}
      */
     List<GroupDto> getGroupsByName(String name, Integer page, Integer pageSize, Principal principal);
 
     /**
-     * @param id
-     * @param principal
+     * Добавляет пользователя в группу
+     *
+     * @param id        id группы, в которую пользователь хочет вступить
+     * @param principal текущий пользователь
      */
     void participateInGroup(Long id, Principal principal);
 
     /**
-     * @param chatId
-     * @param principal
+     * Удаляет пользователя иг группы
+     *
+     * @param id    id группы, из которой пользователь хочет выйти
+     * @param principal текущий пользователь
      */
-    void leaveGroup(Long chatId, Principal principal);
+    void leaveGroup(Long id, Principal principal);
 }

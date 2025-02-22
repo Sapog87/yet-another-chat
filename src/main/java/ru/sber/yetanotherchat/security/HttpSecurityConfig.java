@@ -9,7 +9,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 /**
- *
+ * Конфигурация фильтров Spring Security для HTTP-запросов
  */
 @Configuration
 public class HttpSecurityConfig {

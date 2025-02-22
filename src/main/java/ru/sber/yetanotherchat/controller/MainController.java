@@ -9,13 +9,19 @@ import ru.sber.yetanotherchat.service.PeerService;
 import java.security.Principal;
 
 /**
- *
+ * Контроллер для главной страницы.
  */
 @Controller
 @RequiredArgsConstructor
 public class MainController {
     private final PeerService peerService;
 
+    /**
+     * Возвращает главную старицу
+     *
+     * @param model     Модель для передачи данных в представление.
+     * @param principal Текущий пользователь.
+     */
     @GetMapping
     public String index(Model model, Principal principal) {
         var peers = peerService.getAllChats(principal);

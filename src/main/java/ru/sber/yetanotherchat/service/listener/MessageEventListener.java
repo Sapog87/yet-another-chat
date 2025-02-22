@@ -8,7 +8,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import ru.sber.yetanotherchat.dto.MessageReceivedEvent;
 
 /**
- *
+ * Сервис для отправки сообщений получателям
  */
 @Slf4j
 @Service
@@ -17,7 +17,10 @@ public class MessageEventListener {
     private final SimpMessagingTemplate messagingTemplate;
 
     /**
-     * @param event
+     * Метод для обработки события получения сообщения.
+     * Этот метод отправляет сообщение всем получателям, указанным в событии.
+     *
+     * @param event событие, содержащее информацию о полученном сообщении и получателях
      */
     @TransactionalEventListener
     protected void sendMessages(MessageReceivedEvent event) {

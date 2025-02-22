@@ -14,7 +14,7 @@ import ru.sber.yetanotherchat.service.MessagingService;
 import java.security.Principal;
 
 /**
- *
+ * Контроллер для обработки WebSocket сообщений.
  */
 @Slf4j
 @Controller
@@ -22,6 +22,12 @@ import java.security.Principal;
 public class WebSocketMessageController {
     private final MessagingService service;
 
+    /**
+     * Обрабатывает сообщение от пользователя.
+     *
+     * @param sendMessageDto Сообщение
+     * @param principal      Пользователь, отправляющий сообщение
+     */
     @MessageMapping("/chat/message")
     @SendToUser("/topic/update")
     public MessageDto message(@Payload @Valid SendMessageDto sendMessageDto, Principal principal) {

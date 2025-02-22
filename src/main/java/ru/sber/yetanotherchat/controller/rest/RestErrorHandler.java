@@ -1,10 +1,8 @@
 package ru.sber.yetanotherchat.controller.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -12,15 +10,15 @@ import ru.sber.yetanotherchat.dto.ServerError;
 import ru.sber.yetanotherchat.exception.InvalidPeerException;
 import ru.sber.yetanotherchat.exception.PeerNotFoundException;
 import ru.sber.yetanotherchat.exception.UnreachablePeerException;
+import ru.sber.yetanotherchat.util.ServerErrorUtil;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Objects;
 
+import static ru.sber.yetanotherchat.exception.ErrorMessages.*;
 import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
 
 /**
- *
+ * Обработчик исключений для rest контроллеров
  */
 @Slf4j
 @RestControllerAdvice(
@@ -32,22 +30,7 @@ import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
 public class RestErrorHandler {
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<ServerError> handleException(HandlerMethodValidationException e) {
-        var errors = new HashMap<String, String>();
-
-        e.getValueResults().forEach(
-                result -> result.getResolvableErrors()
-                        .forEach(error -> {
-                            String param = (error instanceof ObjectError objectError ?
-                                    objectError.getObjectName() :
-                                    ((MessageSourceResolvable) Objects.requireNonNull(error.getArguments())[0])
-                                            .getDefaultMessage());
-
-                            param = (result.getContainerIndex() != null ?
-                                    param + "[" + result.getContainerIndex() + "]" : param);
-
-                            errors.put(param, error.getDefaultMessage());
-                        })
-        );
+        var errors = ServerErrorUtil.getStringStringHashMap(e);
 
         return ResponseEntity
                 .badRequest()
@@ -67,8 +50,8 @@ public class RestErrorHandler {
                 .body(ServerError.builder()
                         .error(INTERNAL_SERVER_ERROR.getText())
                         .code(INTERNAL_SERVER_ERROR.getCode())
-                        .message("Internal Server Error")
                         .timestamp(LocalDateTime.now())
+                        .message(INTERNAL_ERROR)
                         .build());
     }
 
@@ -80,7 +63,7 @@ public class RestErrorHandler {
                         .error(BAD_REQUEST.getText())
                         .code(BAD_REQUEST.getCode())
                         .timestamp(LocalDateTime.now())
-                        .message(e.getMessage())
+                        .message(INVALID_PEER)
                         .build());
     }
 
@@ -92,7 +75,7 @@ public class RestErrorHandler {
                         .error(BAD_REQUEST.getText())
                         .code(BAD_REQUEST.getCode())
                         .timestamp(LocalDateTime.now())
-                        .message(e.getMessage())
+                        .message(UNREACHABLE_PEER)
                         .build());
     }
 
@@ -104,7 +87,7 @@ public class RestErrorHandler {
                         .error(NOT_FOUND.getText())
                         .code(NOT_FOUND.getCode())
                         .timestamp(LocalDateTime.now())
-                        .message(e.getMessage())
+                        .message(PEER_NOT_FOUND)
                         .build());
     }
 }

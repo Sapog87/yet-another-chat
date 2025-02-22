@@ -13,7 +13,7 @@ import ru.sber.yetanotherchat.service.domain.UserService;
 import java.util.List;
 
 /**
- *
+ * Интерфейс для работы с пользователями.
  */
 @Service
 @RequiredArgsConstructor
@@ -21,8 +21,11 @@ public class AccountServiceImpl implements AccountService {
     private final UserService userService;
 
     /**
-     * @param dto
-     * @return
+     * Регистрирует нового пользователя.
+     *
+     * @param dto данные для регистрации нового пользователя
+     * @return {@link UserDto}
+     * @throws UserAlreadyExistsException если пользователь с таким username уже существует
      */
     @Override
     @Transactional
@@ -46,10 +49,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
-     * @param name
-     * @param page
-     * @param pageSize
-     * @return
+     * Находит пользователей по части имени с пагинацией.
+     *
+     * @param name     имя для поиска пользователей
+     * @param page     номер страницы для пагинации
+     * @param pageSize размер страницы
+     * @return {@link List<UserDto>}
      */
     @Override
     public List<UserDto> getUsersByName(String name, Integer page, Integer pageSize) {
@@ -64,8 +69,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     /**
-     * @param id
-     * @return
+     * Находит пользователя по его id.
+     *
+     * @param id идентификатор пользователя
+     * @return {@link UserDto}
+     * @throws PeerNotFoundException если пользователя не существует
      */
     @Override
     public UserDto getUserById(Long id) {

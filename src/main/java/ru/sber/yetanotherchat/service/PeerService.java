@@ -6,12 +6,17 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- *
+ * Интерфейс для работы с чатами (пирами).
  */
 public interface PeerService {
     /**
-     * @param principal
-     * @return
+     * Получение всех чатов пользователя.
+     * <p>
+     * Позволяет получить список всех чатов, в которых участвует указанный пользователь.
+     * Это могут быть как личные чаты, так и групповые.
+     *
+     * @param principal текущий пользователь
+     * @return {@link List<PeerDto>} - список чатов
      */
     List<PeerDto> getAllChats(Principal principal);
 }

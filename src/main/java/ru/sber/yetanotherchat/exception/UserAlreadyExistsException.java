@@ -1,7 +1,7 @@
 package ru.sber.yetanotherchat.exception;
 
 /**
- *
+ * Исключение, которое выбрасывается, когда пользователь с таким идентификатором или именем уже существует.
  */
 public class UserAlreadyExistsException extends RuntimeException {
     public UserAlreadyExistsException() {

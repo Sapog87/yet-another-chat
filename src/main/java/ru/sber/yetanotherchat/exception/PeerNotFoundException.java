@@ -1,7 +1,7 @@
 package ru.sber.yetanotherchat.exception;
 
 /**
- *
+ * Исключение, которое выбрасывается, когда указанный peer не найден.
  */
 public class PeerNotFoundException extends RuntimeException {
     public PeerNotFoundException() {

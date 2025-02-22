@@ -8,20 +8,29 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- *
+ * Интерфейс для работы с сообщениями.
  */
 public interface MessagingService {
     /**
-     * @param sendMessageDto
-     * @param sender
-     * @return
+     * Отправка сообщения.
+     * <p>
+     * Обрабатывает отправку сообщения пользователем.
+     * Сообщение будет отправлено в соответствующий чат.
+     *
+     * @param sendMessageDto объект, содержащий данные для отправки сообщения
+     * @param sender         пользователь, отправляющий сообщение
+     * @return {@link MessageDto}
      */
     MessageDto sendMessage(SendMessageDto sendMessageDto, Principal sender);
 
     /**
-     * @param peerId
-     * @param sender
-     * @return
+     * Получение истории сообщений.
+     * <p>
+     * Этот метод используется для получения истории сообщений между двумя пользователями.
+     *
+     * @param fetchHistoryDto объект, содержащий данные для получения сообщения
+     * @param sender          пользователь, запрашивающий историю
+     * @return {@link List<MessageDto>}
      */
-    List<MessageDto> fetchHistory(FetchHistoryDto peerId, Principal sender);
+    List<MessageDto> fetchHistory(FetchHistoryDto fetchHistoryDto, Principal sender);
 }

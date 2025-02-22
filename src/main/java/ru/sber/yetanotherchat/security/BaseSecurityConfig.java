@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.sber.yetanotherchat.repository.UserRepository;
 
 /**
- *
+ * Конфигурация бинов необходимых для работы security layer
  */
 @Configuration
 public class BaseSecurityConfig {

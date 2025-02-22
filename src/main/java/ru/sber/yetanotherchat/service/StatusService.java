@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Сервис мониторинга статуса пользователей
  */
 @Slf4j
 @Service
@@ -27,8 +27,11 @@ public class StatusService {
     private final Map<Long, Set<String>> onlineUsers = new ConcurrentHashMap<>();
 
     /**
-     * @param userId
-     * @return
+     * Проверяет, является ли пользователь онлайн.
+     * Пользователь считается офлайн, если у него нет ни одной открытой сессии.
+     *
+     * @param userId id пользователя
+     * @return true, если пользователь онлайн, иначе false
      */
     public boolean isOnline(Long userId) {
         return !Optional
@@ -38,6 +41,12 @@ public class StatusService {
     }
 
 
+    /**
+     * Обработчик события отключения пользователя от WebSocket.
+     * Удаляет сессию пользователя из списка онлайн.
+     *
+     * @param event событие отключения пользователя
+     */
     @EventListener
     protected void handle(SessionDisconnectEvent event) {
         log.info("Received session disconnect event: {}", event);
@@ -60,6 +69,12 @@ public class StatusService {
         }
     }
 
+    /**
+     * Обработчик события подключения пользователя к WebSocket.
+     * Добавляет сессию пользователя в список онлайн.
+     *
+     * @param event событие подключения пользователя
+     */
     @EventListener
     protected void handle(SessionConnectedEvent event) {
         log.info("Received session connected event: {}", event);

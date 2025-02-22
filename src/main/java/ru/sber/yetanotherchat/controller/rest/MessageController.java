@@ -26,7 +26,7 @@ import java.security.Principal;
 import java.util.Collections;
 
 /**
- *
+ * Контроллер, отвечающий за управление сообщениями.
  */
 @Slf4j
 @RestController
@@ -35,6 +35,14 @@ import java.util.Collections;
 public class MessageController {
     private final MessagingService service;
 
+    /**
+     * Получение истории сообщений с пользователем или группой.
+     *
+     * @param peerId    Идентификатор чата (обязательный, не может быть равен нулю).
+     * @param offsetId  Смещение для пагинации (опционально, положительное число).
+     * @param limit     Ограничение количества возвращаемых сообщений (по умолчанию 0).
+     * @param principal Текущий пользователь.
+     */
     @Operation(summary = "Получение истории сообщений")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = MessageDtoList.class))),

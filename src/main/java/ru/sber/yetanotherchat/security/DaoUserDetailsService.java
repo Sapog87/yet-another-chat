@@ -11,7 +11,7 @@ import ru.sber.yetanotherchat.repository.UserRepository;
 import java.util.List;
 
 /**
- *
+ * Реализация UserDetailsService, которая ищет пользователей базе данных
  */
 @RequiredArgsConstructor
 public class DaoUserDetailsService implements UserDetailsService {

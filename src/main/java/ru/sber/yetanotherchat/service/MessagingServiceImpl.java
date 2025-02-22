@@ -20,7 +20,7 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- *
+ * Сервис для работы с сообщениями
  */
 @Service
 @RequiredArgsConstructor
@@ -31,9 +31,14 @@ public class MessagingServiceImpl implements MessagingService {
     private final MessageService messageService;
 
     /**
-     * @param sendMessageDto
-     * @param sender
-     * @return
+     * Отправка сообщения.
+     * <p>
+     * Обрабатывает отправку сообщения пользователем.
+     * Сообщение будет отправлено в соответствующий чат.
+     *
+     * @param sendMessageDto объект, содержащий данные для отправки сообщения
+     * @param sender         пользователь, отправляющий сообщение
+     * @return {@link MessageDto}
      */
     @Override
     @Transactional
@@ -53,9 +58,13 @@ public class MessagingServiceImpl implements MessagingService {
     }
 
     /**
-     * @param fetchHistoryDto
-     * @param sender
-     * @return
+     * Получение истории сообщений.
+     * <p>
+     * Этот метод используется для получения истории сообщений между двумя пользователями.
+     *
+     * @param fetchHistoryDto объект, содержащий данные для получения сообщения
+     * @param sender          пользователь, запрашивающий историю
+     * @return {@link List<MessageDto>}
      */
     @Override
     @Transactional(readOnly = true)

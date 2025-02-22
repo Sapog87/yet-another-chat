@@ -22,7 +22,7 @@ import java.security.Principal;
 import java.util.Collections;
 
 /**
- *
+ * Контроллер, отвечающий за управление группами
  */
 @Slf4j
 @RestController
@@ -31,6 +31,12 @@ import java.util.Collections;
 public class GroupController {
     private final GroupService groupService;
 
+    /**
+     * Создание новой группы.
+     *
+     * @param name      Имя группы (обязательное поле).
+     * @param principal Текущий пользователь.
+     */
     @Operation(summary = "Создание группы")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GroupResponse.class))),
@@ -58,6 +64,14 @@ public class GroupController {
                 .body(response);
     }
 
+    /**
+     * Поиск групп по имени или его части с поддержкой пагинации.
+     *
+     * @param name      Имя группы (обязательное поле).
+     * @param page      Номер страницы (по умолчанию 0).
+     * @param pageSize  Размер страницы (по умолчанию 20).
+     * @param principal Текущий пользователь.
+     */
     @Operation(summary = "Поиск групп")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GroupResponseList.class))),
@@ -99,6 +113,12 @@ public class GroupController {
                 );
     }
 
+    /**
+     * Вступление в группу.
+     *
+     * @param peerId    Идентификатор группы (должен быть отрицательным).
+     * @param principal Текущий пользователь.
+     */
     @Operation(summary = "Вступление в группу")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Void.class))),
@@ -109,13 +129,20 @@ public class GroupController {
     @PostMapping(
             path = "/groups/{peerId}/members"
     )
-    public ResponseEntity<Void> participateInGroup(@PathVariable("peerId") @Negative Long peerId, Principal principal) {
+    public ResponseEntity<Void> participateInGroup(@PathVariable("peerId") @Negative Long peerId,
+                                                   Principal principal) {
         log.info("Запрос на вступление в группу с peerId = {} от пользователя {}", peerId, principal.getName());
         groupService.participateInGroup(peerId, principal);
 
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Выход из группы.
+     *
+     * @param peerId    Идентификатор группы (должен быть отрицательным).
+     * @param principal Текущий пользователь.
+     */
     @Operation(summary = "Выход из группы")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Void.class))),
@@ -126,7 +153,8 @@ public class GroupController {
     @DeleteMapping(
             path = "/groups/{peerId}/members"
     )
-    public ResponseEntity<Void> leaveGroup(@PathVariable("peerId") @Negative Long peerId, Principal principal) {
+    public ResponseEntity<Void> leaveGroup(@PathVariable("peerId") @Negative Long peerId,
+                                           Principal principal) {
         log.info("Запрос на выход из группы с peerId = {} от пользователя {}", peerId, principal.getName());
         groupService.leaveGroup(peerId, principal);
 

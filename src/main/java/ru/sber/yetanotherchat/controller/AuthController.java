@@ -11,14 +11,20 @@ import ru.sber.yetanotherchat.dto.UserRegistrationDto;
 import ru.sber.yetanotherchat.exception.UserAlreadyExistsException;
 import ru.sber.yetanotherchat.service.AccountService;
 
+
 /**
- *
+ * Контроллер для регистрации и авторизации пользователей.
  */
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
     private final AccountService userService;
 
+    /**
+     * Возвращает страницу регистрации.
+     *
+     * @param model Модель для передачи данных в представление.
+     */
     @GetMapping("/signup")
     public String signup(Model model) {
         var userRegistrationDto = new UserRegistrationDto();
@@ -26,6 +32,11 @@ public class AuthController {
         return "signup";
     }
 
+    /**
+     * Регистрация пользователя.
+     *
+     * @param createDto Данные из формы регистрации.
+     */
     @PostMapping("/signup")
     public String signup(@ModelAttribute("user") @Valid UserRegistrationDto createDto) {
         try {
@@ -37,6 +48,9 @@ public class AuthController {
         return "forward:/login";
     }
 
+    /**
+     * Возвращает страницу аутентификации.
+     */
     @GetMapping(path = "/login")
     public String login() {
         return "login";

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- *
+ * Сервис для работы с {@link Message}
  */
 @Service
 @RequiredArgsConstructor
@@ -22,10 +22,12 @@ public class MessageService {
     private final MessageRepository messageRepository;
 
     /**
-     * @param sender
-     * @param chat
-     * @param text
-     * @return
+     * Создает новое сообщение в указанном чате от указанного пользователя.
+     *
+     * @param sender отправитель сообщения
+     * @param chat   чат, в который отправляется сообщение
+     * @param text   текст сообщения
+     * @return {@link Message} - созданное сообщение
      */
     @Transactional
     public Message createMessage(User sender, Chat chat, String text) {
@@ -41,6 +43,15 @@ public class MessageService {
         return message;
     }
 
+    /**
+     * Извлекает сообщения из чата с поддержкой пагинации. Если передан offsetId,
+     * сообщения извлекаются до этого идентификатора.
+     *
+     * @param chat     чат, из которого извлекаются сообщения
+     * @param limit    максимальное количество сообщений для извлечения
+     * @param offsetId идентификатор последнего сообщения, до которого нужно извлечь
+     * @return {@link List<Message>} - список сообщений, удовлетворяющих условиям
+     */
     public List<Message> fetchMessagesFromChat(Chat chat, Integer limit, Long offsetId) {
         var jpaLimit = limit == null || limit < 1 ? DEFAULT_LIMIT : Limit.of(limit);
 

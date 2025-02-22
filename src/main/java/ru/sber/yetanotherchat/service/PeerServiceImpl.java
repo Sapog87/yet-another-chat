@@ -16,7 +16,7 @@ import static ru.sber.yetanotherchat.dto.Status.OFFLINE;
 import static ru.sber.yetanotherchat.dto.Status.ONLINE;
 
 /**
- *
+ * Сервис для работы с чатами (пирами).
  */
 @Service
 @RequiredArgsConstructor
@@ -26,8 +26,13 @@ public class PeerServiceImpl implements PeerService {
     private final StatusService statusService;
 
     /**
-     * @param principal
-     * @return
+     * Получение всех чатов пользователя.
+     * <p>
+     * Позволяет получить список всех чатов, в которых участвует указанный пользователь.
+     * Это могут быть как личные чаты, так и групповые.
+     *
+     * @param principal текущий пользователь
+     * @return {@link List<PeerDto>} - список чатов
      */
     @Override
     @Transactional

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
+ * Сервис для работы с {@link User}
  */
 @Service
 @RequiredArgsConstructor
@@ -22,10 +22,12 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * @param username
-     * @param password
-     * @param name
-     * @return
+     * Создает нового пользователя с указанными данными.
+     *
+     * @param username имя пользователя
+     * @param password пароль пользователя
+     * @param name     имя пользователя
+     * @return {@link User} - созданный пользователь
      */
     public User createUser(String username, CharSequence password, String name) {
         var user = new User();
@@ -37,16 +39,21 @@ public class UserService {
     }
 
     /**
-     * @param username
-     * @return
+     * Проверяет, существует ли пользователь с указанным именем пользователя.
+     *
+     * @param username имя пользователя
+     * @return true, если пользователь существует, иначе false
      */
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
     /**
-     * @param username
-     * @return
+     * Находит пользователя по имени пользователя.
+     *
+     * @param username имя пользователя
+     * @return User - найденный пользователь
+     * @throws UserNotFoundException если пользователь не найден
      */
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username)
@@ -54,8 +61,11 @@ public class UserService {
     }
 
     /**
-     * @param id
-     * @return
+     * Находит пользователя по его идентификатору.
+     *
+     * @param id идентификатор пользователя
+     * @return {@link User} - найденный пользователь
+     * @throws UserNotFoundException если пользователь не найден
      */
     public User findUserById(Long id) {
         return userRepository.findById(id)
@@ -63,10 +73,12 @@ public class UserService {
     }
 
     /**
-     * @param name
-     * @param page
-     * @param size
-     * @return
+     * Находит пользователей по части имени с поддержкой пагинации.
+     *
+     * @param name часть имени для поиска
+     * @param page номер страницы для пагинации
+     * @param size размер страницы
+     * @return {@link List<User>} - список пользователей, удовлетворяющих поисковому запросу
      */
     public List<User> findAllUsersByName(String name, Integer page, Integer size) {
         if (page == null || page < 0) page = 0;
@@ -75,29 +87,37 @@ public class UserService {
     }
 
     /**
-     * @param chat
-     * @return
+     * Находит всех участников чата.
+     *
+     * @param chat чат, члены которого нужно найти
+     * @return {@link List<User>} - список участников чата
      */
     public List<User> findChatMembers(Chat chat) {
         return userRepository.findAllByChats(chat);
     }
 
     /**
-     * @param user
-     * @param chat
-     * @return
+     * Находит другого участника личного чата (кроме указанного пользователя).
+     *
+     * @param user текущий пользователь
+     * @param chat чат, в котором нужно найти другого участника
+     * @return {@link User} - другой участник чата
+     * @throws IllegalArgumentException если чат является групповым
+     * @throws UserNotFoundException    если другой участник чата не найден
      */
     public User findOtherMemberOfPersonalChat(User user, Chat chat) {
         if (Boolean.TRUE.equals(chat.getIsGroup())) {
-            throw new IllegalArgumentException("Chat is group");
+            throw new IllegalArgumentException(
+                    "Чат {%d} является групповым"
+                            .formatted(chat.getId()));
         }
 
         var users = chat.getMembers();
 
         if (users == null || users.isEmpty()) {
             throw new UserNotFoundException(
-                    "Other user not found (chat %d, user %d)"
-                            .formatted(chat.getId(), user.getId()));
+                    "У чата {%d} нет пользователей"
+                            .formatted(chat.getId()));
         }
 
         if (users.size() == 1) {

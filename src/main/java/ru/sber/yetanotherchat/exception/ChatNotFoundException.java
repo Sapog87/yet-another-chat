@@ -1,7 +1,7 @@
 package ru.sber.yetanotherchat.exception;
 
 /**
- *
+ * Исключение, которое выбрасывается, когда чат не найден.
  */
 public class ChatNotFoundException extends RuntimeException {
     public ChatNotFoundException() {

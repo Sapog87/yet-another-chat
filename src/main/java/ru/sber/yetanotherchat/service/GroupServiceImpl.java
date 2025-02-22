@@ -15,7 +15,7 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- *
+ * Сервис для работы с группами чатов.
  */
 @Service
 @RequiredArgsConstructor
@@ -24,9 +24,11 @@ public class GroupServiceImpl implements GroupService {
     private final UserService userService;
 
     /**
-     * @param name
-     * @param principal
-     * @return
+     * Создает новый групповой чат с указанным названием.
+     *
+     * @param name      название группы
+     * @param principal текущий пользователь, который создает группу
+     * @return {@link GroupDto}
      */
     @Override
     @Transactional
@@ -41,11 +43,13 @@ public class GroupServiceImpl implements GroupService {
     }
 
     /**
-     * @param name
-     * @param page
-     * @param pageSize
-     * @param principal
-     * @return
+     * Получает список групп с указанным именем или его частью с пагинацией.
+     *
+     * @param name      название группы для поиска
+     * @param page      страница для пагинации
+     * @param pageSize  размер страницы для пагинации
+     * @param principal текущий пользователь для проверки членства
+     * @return {@link List<GroupDto>}
      */
     @Override
     @Transactional
@@ -62,16 +66,19 @@ public class GroupServiceImpl implements GroupService {
     }
 
     /**
-     * @param groupId
-     * @param principal
+     * Добавляет пользователя в группу
+     *
+     * @param id        id группы, в которую пользователь хочет вступить
+     * @param principal текущий пользователь
+     * @throws PeerNotFoundException если группа не найдена
      */
     @Override
     @Transactional
-    public void participateInGroup(Long groupId, Principal principal) {
-        var id = Math.abs(groupId);
+    public void participateInGroup(Long id, Principal principal) {
+        var groupId = Math.abs(id);
         var user = userService.findUserByUsername(principal.getName());
         try {
-            var group = getGroup(id);
+            var group = getGroup(groupId);
             if (!chatService.isMemberOfChat(user, group)) {
                 group.getMembers().add(user);
                 user.getChats().add(group);
@@ -79,7 +86,7 @@ public class GroupServiceImpl implements GroupService {
         } catch (ChatNotFoundException e) {
             throw new PeerNotFoundException(
                     "Группа с таким id {%d} не найдена"
-                            .formatted(id), e);
+                            .formatted(groupId), e);
         }
     }
 
@@ -94,16 +101,20 @@ public class GroupServiceImpl implements GroupService {
     }
 
     /**
-     * @param groupId
-     * @param principal
+     * Удаляет пользователя иг группы
+     *
+     * @param id        id группы, из которой пользователь хочет выйти
+     * @param principal текущий пользователь
+     * @throws UnreachablePeerException если не является членом группы
+     * @throws PeerNotFoundException    если группа не найдена
      */
     @Override
     @Transactional
-    public void leaveGroup(Long groupId, Principal principal) {
+    public void leaveGroup(Long id, Principal principal) {
         var user = userService.findUserByUsername(principal.getName());
         try {
-            var id = Math.abs(groupId);
-            var group = getGroup(id);
+            var groupId = Math.abs(id);
+            var group = getGroup(groupId);
             if (!chatService.isMemberOfChat(user, group)) {
                 throw new UnreachablePeerException(
                         "Пользователь {%d} не может покинуть группу {%d} в которой не состоит"

@@ -1,7 +1,7 @@
 package ru.sber.yetanotherchat.exception;
 
 /**
- *
+ * Исключение, которое выбрасывается, когда указанный peer является недействительным.
  */
 public class InvalidPeerException extends RuntimeException {
     public InvalidPeerException() {
