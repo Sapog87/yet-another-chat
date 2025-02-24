@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/db.changelog-init.sql
   - include:
       file: db/changelog/db.changelog-message-chat-id-index.sql
+  - include:
+      file: db/changelog/db.changelog-role-migration.sql

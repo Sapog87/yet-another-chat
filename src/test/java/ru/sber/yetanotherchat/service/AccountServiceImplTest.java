@@ -13,7 +13,6 @@ import ru.sber.yetanotherchat.exception.UserAlreadyExistsException;
 import ru.sber.yetanotherchat.service.domain.UserService;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -40,7 +39,6 @@ class AccountServiceImplTest {
         user.setUsername("username");
         user.setName("name");
         user.setPasswordHash("encodedPassword");
-        user.setRoles(Set.of(User.Role.USER));
     }
 
     @Test
