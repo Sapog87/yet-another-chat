@@ -22,7 +22,6 @@ import ru.sber.yetanotherchat.service.GroupService;
 import java.security.Principal;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -88,13 +87,13 @@ class GroupControllerTest {
                         .param("pageSize", "20"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.groups").value(hasSize(2)))
-                .andExpect(jsonPath("$.groups[0].peerId").value(-1L))
-                .andExpect(jsonPath("$.groups[0].name").value("test1"))
-                .andExpect(jsonPath("$.groups[0].isMember").value(true))
-                .andExpect(jsonPath("$.groups[1].peerId").value(-2L))
-                .andExpect(jsonPath("$.groups[1].name").value("test2"))
-                .andExpect(jsonPath("$.groups[1].isMember").value(false));
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$.[0].peerId").value(-1L))
+                .andExpect(jsonPath("$.[0].name").value("test1"))
+                .andExpect(jsonPath("$.[0].isMember").value(true))
+                .andExpect(jsonPath("$.[1].peerId").value(-2L))
+                .andExpect(jsonPath("$.[1].name").value("test2"))
+                .andExpect(jsonPath("$.[1].isMember").value(false));
 
         verify(groupService).getGroupsByName(eq("test"), eq(0), eq(20), principalCaptor.capture());
         assertEquals("user", principalCaptor.getValue().getName());
@@ -108,9 +107,7 @@ class GroupControllerTest {
 
         mockMvc.perform(get("/api/groups")
                         .param("name", "test"))
-                .andExpect(status().isNoContent())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.groups").value(hasSize(0)));
+                .andExpect(status().isNoContent());
 
         verify(groupService).getGroupsByName(eq("test"), anyInt(), anyInt(), principalCaptor.capture());
         assertEquals("user", principalCaptor.getValue().getName());

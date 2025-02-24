@@ -57,13 +57,13 @@ class UserControllerTest {
                         .param("name", "user"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.users").value(hasSize(2)))
-                .andExpect(jsonPath("$.users[0].peerId").value(1L))
-                .andExpect(jsonPath("$.users[0].name").value("user1"))
-                .andExpect(jsonPath("$.users[0].status").value(Status.ONLINE.name()))
-                .andExpect(jsonPath("$.users[1].peerId").value(2L))
-                .andExpect(jsonPath("$.users[1].name").value("user2"))
-                .andExpect(jsonPath("$.users[1].status").value(Status.OFFLINE.name()));
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$.[0].peerId").value(1L))
+                .andExpect(jsonPath("$.[0].name").value("user1"))
+                .andExpect(jsonPath("$.[0].status").value(Status.ONLINE.name()))
+                .andExpect(jsonPath("$.[1].peerId").value(2L))
+                .andExpect(jsonPath("$.[1].name").value("user2"))
+                .andExpect(jsonPath("$.[1].status").value(Status.OFFLINE.name()));
 
         verify(accountService).getUsersByName(eq("user"), anyInt(), anyInt());
     }
@@ -74,8 +74,7 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/users")
                         .param("name", "user"))
-                .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.users").value(hasSize(0)));
+                .andExpect(status().isNoContent());
 
         verify(accountService).getUsersByName(eq("user"), anyInt(), anyInt());
     }
