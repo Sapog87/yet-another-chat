@@ -1,6 +1,7 @@
 package ru.sber.yetanotherchat.controller.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -9,18 +10,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.sber.yetanotherchat.dto.ServerError;
 import ru.sber.yetanotherchat.dto.UserResponse;
-import ru.sber.yetanotherchat.dto.UserResponseList;
 import ru.sber.yetanotherchat.service.AccountService;
 import ru.sber.yetanotherchat.service.StatusService;
 
 import java.security.Principal;
-import java.util.Collections;
+import java.util.List;
 
 import static ru.sber.yetanotherchat.dto.Status.OFFLINE;
 import static ru.sber.yetanotherchat.dto.Status.ONLINE;
@@ -47,8 +46,8 @@ public class UserController {
      */
     @Operation(summary = "Поиск пользователей")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserResponseList.class))),
-            @ApiResponse(responseCode = "204", description = "No Content", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserResponseList.class))),
+            @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = UserResponse.class)))),
+            @ApiResponse(responseCode = "204", description = "No Content", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Void.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
     })
@@ -56,20 +55,15 @@ public class UserController {
             path = "/users",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<UserResponseList> getUsers(@RequestParam(name = "name") @NotBlank String name,
-                                                     @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-                                                     @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer pageSize,
-                                                     Principal principal) {
+    public ResponseEntity<List<UserResponse>> getUsers(@RequestParam(name = "name") @NotBlank String name,
+                                                       @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                                                       @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer pageSize,
+                                                       Principal principal) {
         log.info("Запрос на поиск пользователей с именем = {} от пользователя {}", name, principal.getName());
         var users = accountService.getUsersByName(name, page, pageSize);
 
         if (users.isEmpty()) {
-            return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
-                    .body(UserResponseList.builder()
-                            .users(Collections.emptyList())
-                            .build()
-                    );
+            return ResponseEntity.noContent().build();
         }
 
         var userDtos = users.stream()
@@ -80,11 +74,7 @@ public class UserController {
                         .build()
                 ).toList();
 
-        return ResponseEntity
-                .ok(UserResponseList.builder()
-                        .users(userDtos)
-                        .build()
-                );
+        return ResponseEntity.ok(userDtos);
     }
 
     /**
