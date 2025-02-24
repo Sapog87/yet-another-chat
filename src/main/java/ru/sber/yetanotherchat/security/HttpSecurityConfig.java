@@ -21,6 +21,7 @@ public class HttpSecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/css/*", "/js/*").permitAll()
                                 .requestMatchers("/login", "/signup", "/error").permitAll()
+                                .requestMatchers("/actuator/**").hasAnyAuthority("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .logout(Customizer.withDefaults())
