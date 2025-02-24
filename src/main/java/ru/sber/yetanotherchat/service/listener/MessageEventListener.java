@@ -32,6 +32,6 @@ public class MessageEventListener {
                                 event.getMessage()
                         )
                 );
-        log.info("Сообщение отправлено: {}", event);
+        log.info("Сообщение {{}} отправлено получателям", event.getMessage().getId());
     }
 }
