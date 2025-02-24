@@ -37,6 +37,7 @@ public class WebSocketErrorHandler {
 
     @MessageExceptionHandler(InvalidPeerException.class)
     public ServerError handleException(InvalidPeerException e) {
+        log.error(e.getMessage(), e);
         return ServerError.builder()
                 .error(BAD_REQUEST.getText())
                 .code(BAD_REQUEST.getCode())
@@ -47,6 +48,7 @@ public class WebSocketErrorHandler {
 
     @MessageExceptionHandler(UnreachablePeerException.class)
     public ServerError handleException(UnreachablePeerException e) {
+        log.error(e.getMessage(), e);
         return ServerError.builder()
                 .error(BAD_REQUEST.getText())
                 .code(BAD_REQUEST.getCode())
@@ -57,6 +59,7 @@ public class WebSocketErrorHandler {
 
     @MessageExceptionHandler(PeerNotFoundException.class)
     public ServerError handleException(PeerNotFoundException e) {
+        log.error(e.getMessage(), e);
         return ServerError.builder()
                 .error(NOT_FOUND.getText())
                 .code(NOT_FOUND.getCode())
@@ -67,6 +70,7 @@ public class WebSocketErrorHandler {
 
     @MessageExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<ServerError> handleException(HandlerMethodValidationException e) {
+        log.error(e.getMessage(), e);
         var errors = ServerErrorUtil.getStringStringHashMap(e);
 
         return ResponseEntity
