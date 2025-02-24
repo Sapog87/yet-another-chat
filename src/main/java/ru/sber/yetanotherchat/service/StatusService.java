@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * Сервис мониторинга статуса пользователей
+ * Сервис мониторинга статуса пользователей.
  */
 @Slf4j
 @Service

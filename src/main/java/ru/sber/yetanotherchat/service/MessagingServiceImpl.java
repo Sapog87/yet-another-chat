@@ -20,7 +20,7 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- * Сервис для работы с сообщениями
+ * Сервис для работы с сообщениями.
  */
 @Service
 @RequiredArgsConstructor
@@ -79,9 +79,9 @@ public class MessagingServiceImpl implements MessagingService {
 
         return messages.stream()
                 .map(message ->
-                        message.getSender().equals(user) ?
-                                getMessageDto(peerId, message, true) :
-                                getMessageDto(peerId, message, false)
+                        message.getSender().equals(user)
+                                ? getMessageDto(peerId, message, true)
+                                : getMessageDto(peerId, message, false)
                 ).toList();
     }
 

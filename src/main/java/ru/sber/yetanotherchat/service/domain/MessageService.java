@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Сервис для работы с {@link Message}
+ * Сервис для работы с {@link Message}.
  */
 @Service
 @RequiredArgsConstructor

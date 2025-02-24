@@ -16,23 +16,23 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfigurer implements WebSocketMessageBrokerConfigurer {
 
     /**
-     * Путь для подключения к WebSocket
+     * Путь для подключения к WebSocket.
      */
     public static final String WEBSOCKET_STOMP_PATH = "/ws";
     /**
-     * Префикс для маршрутов приложений
+     * Префикс для маршрутов приложений.
      */
     public static final String APP_DESTINATION_STOMP_PREFIX = "/app";
     /**
-     * Префикс для маршрутов с привязкой к пользователю
+     * Префикс для маршрутов с привязкой к пользователю.
      */
     public static final String USER_DESTINATION_STOMP_PREFIX = "/user";
     /**
-     * Префикс для маршрутов брокера сообщений
+     * Префикс для маршрутов брокера сообщений.
      */
     public static final String BROKER_DESTINATION_STOMP_PREFIX = "/chat";
     /**
-     * Префикс для общих тем
+     * Префикс для общих тем.
      */
     public static final String TOPIC = "/topic";
 

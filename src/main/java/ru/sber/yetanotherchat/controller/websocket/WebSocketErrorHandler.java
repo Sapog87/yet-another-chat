@@ -18,7 +18,7 @@ import static ru.sber.yetanotherchat.exception.ErrorMessages.*;
 import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
 
 /**
- * Обработчик исключений из websocket контроллера
+ * Обработчик исключений из websocket контроллера.
  */
 @Slf4j
 @ControllerAdvice(basePackageClasses = WebSocketMessageController.class)
@@ -82,6 +82,4 @@ public class WebSocketErrorHandler {
                         .message(errors.toString())
                         .build());
     }
-
-
 }

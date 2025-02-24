@@ -16,11 +16,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Сервис для работы с {@link User}
+ * Сервис для работы с {@link User}.
  */
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    public static final int DEFAULT_LIMIT_SIZE = 20;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
@@ -87,8 +88,12 @@ public class UserService {
      * @return {@link List<User>} - список пользователей, удовлетворяющих поисковому запросу
      */
     public List<User> findAllUsersByName(String name, Integer page, Integer size) {
-        if (page == null || page < 0) page = 0;
-        if (size == null || size < 0) size = 20;
+        if (page == null || page < 0) {
+            page = 0;
+        }
+        if (size == null || size < 0) {
+            size = DEFAULT_LIMIT_SIZE;
+        }
         return userRepository.findAllByNameContainingIgnoreCase(name, PageRequest.of(page, size));
     }
 

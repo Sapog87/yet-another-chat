@@ -27,6 +27,7 @@ public class WebSocketMessageController {
      *
      * @param sendMessageDto Сообщение
      * @param principal      Пользователь, отправляющий сообщение
+     * @return {@link MessageDto}
      */
     @MessageMapping("/chat/message")
     @SendToUser("/topic/update")

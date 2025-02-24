@@ -10,5 +10,7 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findMessagesByChatOrderByIdDesc(Chat chat, Limit limit);
 
-    List<Message> findMessagesByChatAndIdLessThanOrderByIdDesc(Chat chat, Long offsetId, Limit limit);
+    List<Message> findMessagesByChatAndIdLessThanOrderByIdDesc(Chat chat,
+                                                               Long offsetId,
+                                                               Limit limit);
 }

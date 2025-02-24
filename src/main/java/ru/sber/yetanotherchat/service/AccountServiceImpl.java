@@ -25,7 +25,8 @@ public class AccountServiceImpl implements AccountService {
      *
      * @param dto данные для регистрации нового пользователя
      * @return {@link UserDto}
-     * @throws UserAlreadyExistsException если пользователь с таким username уже существует
+     * @throws UserAlreadyExistsException если пользователь с
+     *                                    таким username уже существует
      */
     @Override
     @Transactional
@@ -57,7 +58,9 @@ public class AccountServiceImpl implements AccountService {
      * @return {@link List<UserDto>}
      */
     @Override
-    public List<UserDto> getUsersByName(String name, Integer page, Integer pageSize) {
+    public List<UserDto> getUsersByName(String name,
+                                        Integer page,
+                                        Integer pageSize) {
         var users = userService.findAllUsersByName(name, page, pageSize);
 
         return users.stream().map(user -> UserDto.builder()

@@ -58,9 +58,9 @@ public class PeerServiceImpl implements PeerService {
     }
 
     private Status getStatus(User user, User otherUser) {
-        if (user.equals(otherUser))
+        if (user.equals(otherUser)) {
             return ONLINE;
-
+        }
         return statusService.isOnline(otherUser.getId()) ? ONLINE : OFFLINE;
     }
 }

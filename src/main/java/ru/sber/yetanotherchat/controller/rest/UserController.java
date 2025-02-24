@@ -43,22 +43,49 @@ public class UserController {
      * @param page      Номер страницы (по умолчанию 0).
      * @param pageSize  Размер страницы (по умолчанию 20).
      * @param principal Текущий пользователь.
+     * @return {@link ResponseEntity<List<UserResponse>>}
      */
     @Operation(summary = "Поиск пользователей")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = UserResponse.class)))),
-            @ApiResponse(responseCode = "204", description = "No Content", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Void.class))),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ответ в случае успеха",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            array = @ArraySchema(
+                                    schema = @Schema(
+                                            implementation = UserResponse.class)))),
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "No Content",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = Void.class))),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = ServerError.class))),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = ServerError.class))),
     })
     @GetMapping(
             path = "/users",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<UserResponse>> getUsers(@RequestParam(name = "name") @NotBlank String name,
-                                                       @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-                                                       @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer pageSize,
-                                                       Principal principal) {
+    public ResponseEntity<List<UserResponse>> getUsers(
+            @RequestParam(name = "name") @NotBlank String name,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer pageSize,
+            Principal principal) {
         log.info("Запрос на поиск пользователей с именем = {} от пользователя {}", name, principal.getName());
         var users = accountService.getUsersByName(name, page, pageSize);
 
@@ -82,21 +109,48 @@ public class UserController {
      *
      * @param peerId    Идентификатор пользователя (должен быть положительным).
      * @param principal Информация о текущем пользователе.
+     * @return {@link ResponseEntity<UserResponse>}
      */
     @Operation(summary = "Поиск пользователя по id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ответ в случае успеха",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = UserResponse.class))),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = ServerError.class))),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = ServerError.class))),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = ServerError.class))),
     })
     @GetMapping(
             path = "/users/{peerId}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<UserResponse> getUser(@PathVariable @Positive Long peerId,
-                                                Principal principal) {
-        log.info("Запрос на поиск пользователей с id = {} от пользователя {}", peerId, principal.getName());
+    public ResponseEntity<UserResponse> getUser(
+            @PathVariable @Positive Long peerId,
+            Principal principal) {
+        log.info("Запрос на поиск пользователей с id = {} от пользователя {}",
+                peerId, principal.getName());
         var userDto = accountService.getUserById(peerId);
 
         return ResponseEntity

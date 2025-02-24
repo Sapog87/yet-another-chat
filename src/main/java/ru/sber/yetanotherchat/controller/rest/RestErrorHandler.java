@@ -18,7 +18,7 @@ import static ru.sber.yetanotherchat.exception.ErrorMessages.*;
 import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
 
 /**
- * Обработчик исключений для rest контроллеров
+ * Обработчик исключений для rest контроллеров.
  */
 @Slf4j
 @RestControllerAdvice(

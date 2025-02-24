@@ -42,24 +42,58 @@ public class MessageController {
      * @param offsetId  Смещение для пагинации (опционально, положительное число).
      * @param limit     Ограничение количества возвращаемых сообщений (по умолчанию 0).
      * @param principal Текущий пользователь.
+     * @return {@link ResponseEntity<List<MessageDto>>}
      */
     @Operation(summary = "Получение истории сообщений")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ответ в случае успеха", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = MessageDto.class)))),
-            @ApiResponse(responseCode = "204", description = "No Content", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Void.class))),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
-            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerError.class))),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ответ в случае успеха",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            array = @ArraySchema(
+                                    schema = @Schema(
+                                            implementation = MessageDto.class)))),
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "No Content",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = Void.class))),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = ServerError.class))),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = ServerError.class))),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal Server Error",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = ServerError.class))),
     })
     @GetMapping(
             path = "/messages",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<MessageDto>> history(@RequestParam(name = "peerId") @NotZero Long peerId,
-                                                    @RequestParam(name = "offsetId", required = false) @Positive Long offsetId,
-                                                    @RequestParam(name = "limit", required = false, defaultValue = "0") @PositiveOrZero Integer limit,
-                                                    Principal principal) {
-        log.info("Запрос на получение истории сообщений c peer = {} от пользователя {}", peerId, principal.getName());
+    public ResponseEntity<List<MessageDto>> history(
+            @RequestParam(name = "peerId") @NotZero Long peerId,
+            @RequestParam(name = "offsetId", required = false) @Positive Long offsetId,
+            @RequestParam(name = "limit", required = false, defaultValue = "0") @PositiveOrZero Integer limit,
+            Principal principal) {
+        log.info("Запрос на получение истории сообщений c peer = {} от пользователя {}",
+                peerId, principal.getName());
 
         var messageDtos = service.fetchHistory(
                 FetchHistoryDto.builder()

@@ -53,7 +53,8 @@ public class GroupServiceImpl implements GroupService {
      */
     @Override
     @Transactional
-    public List<GroupDto> getGroupsByName(String name, Integer page, Integer pageSize, Principal principal) {
+    public List<GroupDto> getGroupsByName(String name, Integer page,
+                                          Integer pageSize, Principal principal) {
         var user = userService.findUserByUsername(principal.getName());
         var groups = chatService.findAllGroupsByName(name, page, pageSize);
         return groups.stream()
@@ -66,7 +67,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     /**
-     * Добавляет пользователя в группу
+     * Добавляет пользователя в группу.
      *
      * @param id        id группы, в которую пользователь хочет вступить
      * @param principal текущий пользователь
@@ -107,7 +108,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     /**
-     * Удаляет пользователя иг группы
+     * Удаляет пользователя иг группы.
      *
      * @param id        id группы, из которой пользователь хочет выйти
      * @param principal текущий пользователь

@@ -27,10 +27,11 @@ public interface GroupService {
      * @param principal текущий пользователь для проверки членства
      * @return {@link List<GroupDto>}
      */
-    List<GroupDto> getGroupsByName(String name, Integer page, Integer pageSize, Principal principal);
+    List<GroupDto> getGroupsByName(String name, Integer page,
+                                   Integer pageSize, Principal principal);
 
     /**
-     * Добавляет пользователя в группу
+     * Добавляет пользователя в группу.
      *
      * @param id        id группы, в которую пользователь хочет вступить
      * @param principal текущий пользователь
@@ -39,9 +40,9 @@ public interface GroupService {
     GroupDto participateInGroup(Long id, Principal principal);
 
     /**
-     * Удаляет пользователя иг группы
+     * Удаляет пользователя из группы.
      *
-     * @param id    id группы, из которой пользователь хочет выйти
+     * @param id        id группы, из которой пользователь хочет выйти
      * @param principal текущий пользователь
      * @return {@link GroupDto}
      */

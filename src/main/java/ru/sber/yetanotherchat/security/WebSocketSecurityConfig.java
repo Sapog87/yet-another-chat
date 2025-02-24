@@ -9,13 +9,14 @@ import org.springframework.security.config.annotation.web.socket.EnableWebSocket
 import org.springframework.security.messaging.access.intercept.MessageMatcherDelegatingAuthorizationManager;
 
 /**
- * Конфигурация фильтров Spring Security для Websocket-запросов
+ * Конфигурация фильтров Spring Security для Websocket-запросов.
  */
 @Configuration
 @EnableWebSocketSecurity
 public class WebSocketSecurityConfig {
     @Bean
-    public AuthorizationManager<Message<?>> messageAuthorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
+    public AuthorizationManager<Message<?>> messageAuthorizationManager(
+            MessageMatcherDelegatingAuthorizationManager.Builder messages) {
         messages
                 .anyMessage().authenticated();
 
