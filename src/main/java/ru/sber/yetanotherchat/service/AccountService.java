@@ -1,21 +1,52 @@
 package ru.sber.yetanotherchat.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sber.yetanotherchat.dto.UserDto;
 import ru.sber.yetanotherchat.dto.UserRegistrationDto;
+import ru.sber.yetanotherchat.exception.PeerNotFoundException;
+import ru.sber.yetanotherchat.exception.UserAlreadyExistsException;
+import ru.sber.yetanotherchat.exception.UserNotFoundException;
+import ru.sber.yetanotherchat.service.domain.UserService;
 
 import java.util.List;
 
 /**
  * Интерфейс для работы с пользователями.
  */
-public interface AccountService {
+@Service
+@RequiredArgsConstructor
+public class AccountService {
+    private final UserService userService;
+
     /**
      * Регистрирует нового пользователя.
      *
      * @param dto данные для регистрации нового пользователя
      * @return {@link UserDto}
+     * @throws UserAlreadyExistsException если пользователь с
+     *                                    таким username уже существует
      */
-    UserDto registerUser(UserRegistrationDto dto);
+    @Transactional
+    public UserDto registerUser(UserRegistrationDto dto) {
+        if (userService.existsByUsername(dto.getUsername())) {
+            throw new UserAlreadyExistsException(
+                    "Пользователь с таким username {%s} уже существует"
+                            .formatted(dto.getUsername()));
+        }
+
+        var user = userService.createUser(
+                dto.getUsername(),
+                dto.getPassword(),
+                dto.getName());
+
+        return UserDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .name(user.getName())
+                .build();
+    }
 
     /**
      * Находит пользователей по части имени с пагинацией.
@@ -25,13 +56,37 @@ public interface AccountService {
      * @param pageSize размер страницы
      * @return {@link List<UserDto>}
      */
-    List<UserDto> getUsersByName(String name, Integer page, Integer pageSize);
+    public List<UserDto> getUsersByName(String name,
+                                        Integer page,
+                                        Integer pageSize) {
+        var users = userService.findAllUsersByName(name, page, pageSize);
+
+        return users.stream().map(user -> UserDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .name(user.getName())
+                .build()
+        ).toList();
+    }
 
     /**
      * Находит пользователя по его id.
      *
      * @param id идентификатор пользователя
      * @return {@link UserDto}
+     * @throws PeerNotFoundException если пользователя не существует
      */
-    UserDto getUserById(Long id);
+    public UserDto getUserById(Long id) {
+        try {
+            var user = userService.findUserById(id);
+
+            return UserDto.builder()
+                    .id(user.getId())
+                    .name(user.getName())
+                    .username(user.getUsername())
+                    .build();
+        } catch (UserNotFoundException e) {
+            throw new PeerNotFoundException(e.getMessage(), e);
+        }
+    }
 }

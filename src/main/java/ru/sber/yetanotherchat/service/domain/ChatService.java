@@ -14,11 +14,12 @@ import ru.sber.yetanotherchat.repository.UserChatRepository;
 import java.util.List;
 
 /**
- * Сервис для работы с {@link Chat}
+ * Сервис для работы с {@link Chat}.
  */
 @Service
 @RequiredArgsConstructor
 public class ChatService {
+    public static final int DEFAULT_LIMIT_SIZE = 20;
     private final ChatRepository chatRepository;
     private final UserChatRepository userChatRepository;
 
@@ -133,9 +134,14 @@ public class ChatService {
      * @return {@link List<Chat>} - список чатов, удовлетворяющих запросу
      */
     public List<Chat> findAllGroupsByName(String name, Integer page, Integer size) {
-        if (page == null || page < 0) page = 0;
-        if (size == null || size < 0) size = 20;
-        return chatRepository.findChatByGroupChatNameContainingIgnoreCaseAndIsGroup(name, true, PageRequest.of(page, size));
+        if (page == null || page < 0) {
+            page = 0;
+        }
+        if (size == null || size < 0) {
+            size = DEFAULT_LIMIT_SIZE;
+        }
+        return chatRepository.findChatByGroupChatNameContainingIgnoreCaseAndIsGroup(
+                name, true, PageRequest.of(page, size));
     }
 
     /**

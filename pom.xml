@@ -118,6 +118,46 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <exclude>ru/sber/yetanotherchat/config/*</exclude>
+                        <exclude>ru/sber/yetanotherchat/exception/*</exclude>
+                        <exclude>ru/sber/yetanotherchat/dto/*</exclude>
+                        <exclude>ru/sber/yetanotherchat/entity/*</exclude>
+                        <exclude>ru/sber/yetanotherchat/security/*</exclude>
+                        <exclude>ru/sber/yetanotherchat/YetAnotherChatApplication.java</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <failsOnError>true</failsOnError>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

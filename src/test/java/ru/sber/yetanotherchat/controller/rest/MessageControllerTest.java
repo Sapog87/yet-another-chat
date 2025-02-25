@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -63,13 +62,13 @@ class MessageControllerTest {
                         .param("peerId", "1")
                         .param("limit", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.messages").value(hasSize(1)))
-                .andExpect(jsonPath("$.messages[0].id").value(1L))
-                .andExpect(jsonPath("$.messages[0].peerId").value(1L))
-                .andExpect(jsonPath("$.messages[0].text").value("text1"))
-                .andExpect(jsonPath("$.messages[0].senderName").value("name1"))
-                .andExpect(jsonPath("$.messages[0].createdAt").value(LocalDateTime.MIN.format(DateTimeFormatter.ISO_DATE_TIME)))
-                .andExpect(jsonPath("$.messages[0].outgoing").value(true));
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$.[0].id").value(1L))
+                .andExpect(jsonPath("$.[0].peerId").value(1L))
+                .andExpect(jsonPath("$.[0].text").value("text1"))
+                .andExpect(jsonPath("$.[0].senderName").value("name1"))
+                .andExpect(jsonPath("$.[0].createdAt").value(LocalDateTime.MIN.format(DateTimeFormatter.ISO_DATE_TIME)))
+                .andExpect(jsonPath("$.[0].outgoing").value(true));
 
         verify(messagingService).fetchHistory(fetchHistoryCaptor.capture(), principalCaptor.capture());
         assertEquals("user", principalCaptor.getValue().getName());
@@ -85,8 +84,7 @@ class MessageControllerTest {
         mockMvc.perform(get("/api/messages")
                         .param("peerId", "1")
                         .param("limit", "10"))
-                .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.messages").value(hasSize(0)));
+                .andExpect(status().isNoContent());
 
         verify(messagingService).fetchHistory(fetchHistoryCaptor.capture(), principalCaptor.capture());
         assertEquals("user", principalCaptor.getValue().getName());

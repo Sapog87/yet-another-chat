@@ -237,16 +237,16 @@ async function usersSearchRequest(value) {
     if (response.status === 200) {
         renderUsers(await response.json())
     } else {
-        renderUsers({users: []})
+        renderUsers([])
     }
 }
 
-const renderUsers = (json) => {
+const renderUsers = (users) => {
     const search_result = document.getElementById("search-result");
     search_result.innerHTML = ''
-    for (const i in json.users) {
-        console.log(json.users[i])
-        search_result.appendChild(renderUser(json.users[i]))
+    for (const user of users) {
+        console.log(user)
+        search_result.appendChild(renderUser(user))
     }
 }
 
@@ -326,7 +326,7 @@ async function historyRequest(peerId) {
         }
         if (response.status === 200) {
             const json = await response.json()
-            json.messages.forEach((message) => {
+            json.forEach((message) => {
                 save(message)
                 const scrollTop = container.scrollTop;
                 const m_div = getMessage(message)
@@ -392,15 +392,15 @@ async function groupsSearchRequest(value) {
     if (response.status === 200) {
         renderGroups(await response.json())
     } else {
-        renderGroups({groups: []})
+        renderGroups([])
     }
 }
 
-const renderGroups = (json) => {
+const renderGroups = (groups) => {
     const search_result = document.getElementById("search-result");
     search_result.innerHTML = ''
-    for (const i in json.groups) {
-        search_result.appendChild(renderGroup(json.groups[i]))
+    for (const group of groups) {
+        search_result.appendChild(renderGroup(group))
     }
 }
 

@@ -4,22 +4,27 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sber.yetanotherchat.entity.Chat;
+import ru.sber.yetanotherchat.entity.Role;
 import ru.sber.yetanotherchat.entity.User;
 import ru.sber.yetanotherchat.exception.UserNotFoundException;
+import ru.sber.yetanotherchat.repository.RoleRepository;
 import ru.sber.yetanotherchat.repository.UserRepository;
 
 import java.util.List;
 import java.util.Set;
 
 /**
- * Сервис для работы с {@link User}
+ * Сервис для работы с {@link User}.
  */
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    public static final int DEFAULT_LIMIT_SIZE = 20;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     /**
      * Создает нового пользователя с указанными данными.
@@ -29,12 +34,14 @@ public class UserService {
      * @param name     имя пользователя
      * @return {@link User} - созданный пользователь
      */
+    @Transactional
     public User createUser(String username, CharSequence password, String name) {
         var user = new User();
         user.setName(name);
         user.setUsername(username);
         user.setPasswordHash(passwordEncoder.encode(password));
-        user.setRoles(Set.of(User.Role.USER));
+        var role = roleRepository.findByRole(Role.UserRole.USER);
+        user.setRoles(Set.of(role));
         return userRepository.save(user);
     }
 
@@ -81,8 +88,12 @@ public class UserService {
      * @return {@link List<User>} - список пользователей, удовлетворяющих поисковому запросу
      */
     public List<User> findAllUsersByName(String name, Integer page, Integer size) {
-        if (page == null || page < 0) page = 0;
-        if (size == null || size < 0) size = 20;
+        if (page == null || page < 0) {
+            page = 0;
+        }
+        if (size == null || size < 0) {
+            size = DEFAULT_LIMIT_SIZE;
+        }
         return userRepository.findAllByNameContainingIgnoreCase(name, PageRequest.of(page, size));
     }
 

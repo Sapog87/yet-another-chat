@@ -13,12 +13,11 @@ import ru.sber.yetanotherchat.exception.UserAlreadyExistsException;
 import ru.sber.yetanotherchat.service.domain.UserService;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = AccountServiceImpl.class)
+@SpringBootTest(classes = AccountService.class)
 class AccountServiceImplTest {
     @MockitoBean
     private UserService userService;
@@ -40,7 +39,6 @@ class AccountServiceImplTest {
         user.setUsername("username");
         user.setName("name");
         user.setPasswordHash("encodedPassword");
-        user.setRoles(Set.of(User.Role.USER));
     }
 
     @Test

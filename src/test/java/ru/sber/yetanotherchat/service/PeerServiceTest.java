@@ -21,8 +21,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest(classes = PeerServiceImpl.class)
-class PeerServiceImplTest {
+@SpringBootTest(classes = PeerService.class)
+class PeerServiceTest {
     @MockitoBean
     private ChatService chatService;
     @MockitoBean

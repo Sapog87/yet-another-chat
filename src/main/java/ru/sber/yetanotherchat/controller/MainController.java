@@ -17,10 +17,11 @@ public class MainController {
     private final PeerService peerService;
 
     /**
-     * Возвращает главную старицу
+     * Возвращает главную старицу.
      *
      * @param model     Модель для передачи данных в представление.
      * @param principal Текущий пользователь.
+     * @return view
      */
     @GetMapping
     public String index(Model model, Principal principal) {

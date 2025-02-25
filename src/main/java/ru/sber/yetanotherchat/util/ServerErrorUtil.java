@@ -17,13 +17,14 @@ public class ServerErrorUtil {
         e.getValueResults().forEach(
                 result -> result.getResolvableErrors()
                         .forEach(error -> {
-                            String param = (error instanceof ObjectError objectError ?
-                                    objectError.getObjectName() :
-                                    ((MessageSourceResolvable) Objects.requireNonNull(error.getArguments())[0])
-                                            .getDefaultMessage());
+                            String param = (error instanceof ObjectError objectError
+                                    ? objectError.getObjectName()
+                                    : ((MessageSourceResolvable) Objects.requireNonNull(error.getArguments())[0])
+                                    .getDefaultMessage());
 
-                            param = (result.getContainerIndex() != null ?
-                                    param + "[" + result.getContainerIndex() + "]" : param);
+                            param = (result.getContainerIndex() != null
+                                    ? param + "[" + result.getContainerIndex() + "]"
+                                    : param);
 
                             errors.put(param, error.getDefaultMessage());
                         })

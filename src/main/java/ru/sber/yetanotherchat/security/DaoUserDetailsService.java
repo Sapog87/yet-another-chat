@@ -11,7 +11,7 @@ import ru.sber.yetanotherchat.repository.UserRepository;
 import java.util.List;
 
 /**
- * Реализация UserDetailsService, которая ищет пользователей базе данных
+ * Реализация UserDetailsService, которая ищет пользователей базе данных.
  */
 @RequiredArgsConstructor
 public class DaoUserDetailsService implements UserDetailsService {
@@ -31,7 +31,7 @@ public class DaoUserDetailsService implements UserDetailsService {
     private List<SimpleGrantedAuthority> getRoles(User user) {
         return user.getRoles()
                 .stream()
-                .map(role -> new SimpleGrantedAuthority(role.toString()))
+                .map(role -> new SimpleGrantedAuthority(role.getRole().name()))
                 .toList();
     }
 }

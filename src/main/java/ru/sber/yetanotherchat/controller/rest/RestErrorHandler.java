@@ -18,7 +18,7 @@ import static ru.sber.yetanotherchat.exception.ErrorMessages.*;
 import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
 
 /**
- * Обработчик исключений для rest контроллеров
+ * Обработчик исключений для rest контроллеров.
  */
 @Slf4j
 @RestControllerAdvice(
@@ -30,6 +30,7 @@ import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
 public class RestErrorHandler {
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<ServerError> handleException(HandlerMethodValidationException e) {
+        log.error(e.getMessage(), e);
         var errors = ServerErrorUtil.getStringStringHashMap(e);
 
         return ResponseEntity
@@ -57,6 +58,7 @@ public class RestErrorHandler {
 
     @ExceptionHandler(InvalidPeerException.class)
     public ResponseEntity<ServerError> handleException(InvalidPeerException e) {
+        log.error(e.getMessage(), e);
         return ResponseEntity
                 .badRequest()
                 .body(ServerError.builder()
@@ -69,6 +71,7 @@ public class RestErrorHandler {
 
     @ExceptionHandler(UnreachablePeerException.class)
     public ResponseEntity<ServerError> handleException(UnreachablePeerException e) {
+        log.error(e.getMessage(), e);
         return ResponseEntity
                 .badRequest()
                 .body(ServerError.builder()
@@ -81,6 +84,7 @@ public class RestErrorHandler {
 
     @ExceptionHandler(PeerNotFoundException.class)
     public ResponseEntity<ServerError> handleException(PeerNotFoundException e) {
+        log.error(e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ServerError.builder()

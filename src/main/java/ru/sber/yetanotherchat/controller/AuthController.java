@@ -24,6 +24,7 @@ public class AuthController {
      * Возвращает страницу регистрации.
      *
      * @param model Модель для передачи данных в представление.
+     * @return view
      */
     @GetMapping("/signup")
     public String signup(Model model) {
@@ -36,9 +37,11 @@ public class AuthController {
      * Регистрация пользователя.
      *
      * @param createDto Данные из формы регистрации.
+     * @return view
      */
     @PostMapping("/signup")
-    public String signup(@ModelAttribute("user") @Valid UserRegistrationDto createDto) {
+    public String signup(@ModelAttribute("user")
+                         @Valid UserRegistrationDto createDto) {
         try {
             userService.registerUser(createDto);
         } catch (UserAlreadyExistsException e) {
@@ -50,6 +53,8 @@ public class AuthController {
 
     /**
      * Возвращает страницу аутентификации.
+     *
+     * @return view
      */
     @GetMapping(path = "/login")
     public String login() {

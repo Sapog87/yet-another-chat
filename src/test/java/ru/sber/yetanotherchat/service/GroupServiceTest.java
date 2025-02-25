@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = GroupServiceImpl.class)
-class GroupServiceImplTest {
+@SpringBootTest(classes = GroupService.class)
+class GroupServiceTest {
     @MockitoBean
     private ChatService chatService;
     @MockitoBean

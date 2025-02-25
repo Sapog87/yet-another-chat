@@ -3,15 +3,21 @@ name: CI/CD
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    paths:
+      - .github/workflows/yet-another-chat.yml
+      - src/**
   pull_request:
     branches:
       - main
+    paths:
+      - .github/workflows/yet-another-chat.yml
+      - src/**
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -20,12 +26,25 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-          
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
-        
+
+      - name: jacoco
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 30
+          min-coverage-changed-files: 30
+          title: Code Coverage
+          update-comment: true
+
   docker:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    needs: build
     permissions:
       contents: read
       packages: write
@@ -47,3 +66,17 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: ghcr.io/sapog87/yet-another-chat:latest
+
+  checkstyle:
+    name: checkstyle
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - run: mvn checkstyle:check

@@ -8,7 +8,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import ru.sber.yetanotherchat.dto.MessageReceivedEvent;
 
 /**
- * Сервис для отправки сообщений получателям
+ * Сервис для отправки сообщений получателям.
  */
 @Slf4j
 @Service
@@ -32,6 +32,6 @@ public class MessageEventListener {
                                 event.getMessage()
                         )
                 );
-        log.info("Сообщение отправлено: {}", event);
+        log.info("Сообщение {{}} отправлено получателям", event.getMessage().getId());
     }
 }
