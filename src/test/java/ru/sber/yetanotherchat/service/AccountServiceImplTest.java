@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = AccountServiceImpl.class)
+@SpringBootTest(classes = AccountService.class)
 class AccountServiceImplTest {
     @MockitoBean
     private UserService userService;
