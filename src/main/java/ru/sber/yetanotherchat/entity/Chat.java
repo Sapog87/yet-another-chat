@@ -2,6 +2,7 @@ package ru.sber.yetanotherchat.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +27,8 @@ public class Chat {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "group_chat_name", length = Integer.MAX_VALUE)
+    @Column(name = "group_chat_name")
+    @Size(max = 255)
     private String groupChatName;
 
     @Column(name = "is_group", nullable = false)

@@ -3,6 +3,7 @@ package ru.sber.yetanotherchat.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,8 +28,9 @@ public class Message {
     @NotNull
     private User sender;
 
-    @Column(name = "text", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "text", nullable = false)
     @NotBlank
+    @Size(max = 512)
     private String text;
 
     @ManyToOne

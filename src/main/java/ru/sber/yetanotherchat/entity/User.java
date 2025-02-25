@@ -2,6 +2,7 @@ package ru.sber.yetanotherchat.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,16 +27,19 @@ public class User {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "name", nullable = false)
     @NotBlank
+    @Size(max = 255)
     private String name;
 
-    @Column(name = "username", nullable = false, unique = true, length = Integer.MAX_VALUE)
+    @Column(name = "username", nullable = false, unique = true)
     @NotBlank
+    @Size(max = 255)
     private String username;
 
-    @Column(name = "password_hash", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "password_hash", nullable = false)
     @NotBlank
+    @Size(max = 255)
     private String passwordHash;
 
     @CreationTimestamp
