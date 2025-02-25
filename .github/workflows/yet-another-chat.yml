@@ -28,6 +28,17 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
+      - name: jacoco
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: ${{ github.workspace }}/bot/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 30
+          min-coverage-changed-files: 30
+          title: Code Coverage
+          update-comment: true
+
   docker:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
