@@ -18,6 +18,8 @@
 - **Liquibase**
 - **Thymeleaf**
 - **Micrometer**
+- **Prometheus**
+- **Grafana**
 
 ## Функционал
 
