@@ -1,11 +1,11 @@
-package ru.sber.yetanotherchat.security;
+package ru.sber.yetanotherchat.security.prometheus;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Настройки конфигурации для пользователя Prometheus.
+ * Учетные данные, которые использует Prometheus для доступа к метрикам.
  */
 @Setter
 @Getter

@@ -1,4 +1,4 @@
-package ru.sber.yetanotherchat.security;
+package ru.sber.yetanotherchat.security.prometheus;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
