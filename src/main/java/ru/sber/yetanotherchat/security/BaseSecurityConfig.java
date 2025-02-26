@@ -26,8 +26,8 @@ public class BaseSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository) {
+    @Bean(name = "main")
+    public UserDetailsService mainUserDetailsService(UserRepository userRepository) {
         UserCache userCache = new SpringCacheBasedUserCache(new ConcurrentMapCache(CACHE_KEY));
         UserDetailsService delegate = new DaoUserDetailsService(userRepository);
         CachingUserDetailsService userDetailsService = new CachingUserDetailsService(delegate);
