@@ -1,11 +1,14 @@
 package ru.sber.yetanotherchat.controller.rest;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,11 +28,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = {UserController.class})
 @Import(HttpSecurityConfig.class)
-@WithMockUser(username = "user")
+@WithMockUser(username = "user", authorities = "USER")
 class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    @Qualifier("main")
+    private UserDetailsService userDetailsService1;
+
+    @MockitoBean
+    @Qualifier("prometheus")
+    private UserDetailsService userDetailsService2;
 
     @MockitoBean
     private AccountService accountService;
@@ -47,7 +58,8 @@ class UserControllerTest {
     }
 
     @Test
-    void getUsers() throws Exception {
+    @DisplayName("Поиск пользователей с непустым ответом")
+    void getUsersWithNotEmptyResponse() throws Exception {
         doReturn(List.of(user1, user2)).when(accountService).getUsersByName(anyString(), anyInt(), anyInt());
 
         doReturn(true).doReturn(false).when(statusService).isOnline(anyLong());
@@ -68,7 +80,8 @@ class UserControllerTest {
     }
 
     @Test
-    void getUsers2() throws Exception {
+    @DisplayName("Поиск пользователей с пустым ответом")
+    void getUsersWithEmptyResponse() throws Exception {
         doReturn(List.of()).when(accountService).getUsersByName(anyString(), anyInt(), anyInt());
 
         mockMvc.perform(get("/api/users")
@@ -79,14 +92,16 @@ class UserControllerTest {
     }
 
     @Test
-    void getUsers3() throws Exception {
+    @DisplayName("Поиск пользователей с неверным параметром")
+    void getUsersWithInvalidParam() throws Exception {
         mockMvc.perform(get("/api/users")
                         .param("name", ""))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void getUser() throws Exception {
+    @DisplayName("Поиск пользователя с непустым ответом")
+    void getUserWithNotEmptyResponse() throws Exception {
         doReturn(user1).when(accountService).getUserById(anyLong());
         doReturn(true).when(statusService).isOnline(anyLong());
 
@@ -97,13 +112,15 @@ class UserControllerTest {
     }
 
     @Test
-    void getUser2() throws Exception {
+    @DisplayName("Поиск пользователя с неверным параметром")
+    void getUserWithInvalidParam() throws Exception {
         mockMvc.perform(get("/api/users/{id}", -1L))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void getUser3() throws Exception {
+    @DisplayName("Поиск пользователя, которого не существует")
+    void getUserThatNotExists() throws Exception {
         doThrow(PeerNotFoundException.class).when(accountService).getUserById(anyLong());
 
         mockMvc.perform(get("/api/users/{id}", 1L))
