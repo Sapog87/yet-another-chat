@@ -28,4 +28,8 @@ public class UserChat {
     @JoinColumn(name = "chat_id")
     @NotNull
     private Chat chat;
+
+    @Column(name = "peer_id", nullable = false)
+    @NotNull
+    private Long peerId;
 }
