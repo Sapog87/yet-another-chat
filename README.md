@@ -20,6 +20,7 @@
 - **Micrometer**
 - **Prometheus**
 - **Grafana**
+- **Docker**
 
 ## Функционал
 
@@ -49,11 +50,13 @@ docker pull ghcr.io/sapog87/yet-another-chat
 
 ## Environment Variables
 
-| Переменная    | Описание                            | Пример значений |
-|---------------|-------------------------------------|-----------------|
-| `DB_HOST`     | Доменное имя сервера с базой данных | `example.com`   |
-| `DB_PORT`     | Порт базы данных                    | `5432`          |
-| `DB_NAME`     | Имя базы данных                     | `postgres`      |
-| `DB_USERNAME` | Имя пользователя                    | `postgres`      |
-| `DB_PASSWORD` | Пароль пользователя                 | `postgres`      |
-| `SERVER_PORT` | Порт для приложение                 | `8080`          |
+| Переменная            | Описание                            | Пример значений |
+|-----------------------|-------------------------------------|-----------------|
+| `DB_HOST`             | Доменное имя сервера с базой данных | `example.com`   |
+| `DB_PORT`             | Порт базы данных                    | `5432`          |
+| `DB_NAME`             | Имя базы данных                     | `postgres`      |
+| `DB_USERNAME`         | Имя пользователя базы данных        | `postgres`      |
+| `DB_PASSWORD`         | Пароль пользователя базы данных     | `postgres`      |
+| `SERVER_PORT`         | Порт для приложение                 | `8080`          |
+| `PROMETHEUS_USERNAME` | Username для подключения Prometheus | `prometheus`    |
+| `PROMETHEUS_PASSWORD` | Пароль для подключения Prometheus   | `prometheus`    |
