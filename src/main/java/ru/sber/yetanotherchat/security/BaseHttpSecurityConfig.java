@@ -1,6 +1,5 @@
 package ru.sber.yetanotherchat.security;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +16,12 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
  */
 @Configuration
 @ComponentScan
-public class HttpSecurityConfig {
+public class BaseHttpSecurityConfig {
     @Bean
-    @Order(2)
+    @Order
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            @Qualifier("main") UserDetailsService userDetailsService
+            UserDetailsService userDetailsService
     ) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -42,23 +41,6 @@ public class HttpSecurityConfig {
                                 .successHandler(new SimpleUrlAuthenticationSuccessHandler("/"))
                                 .permitAll()
                 )
-                .userDetailsService(userDetailsService);
-
-        return http.build();
-    }
-
-    @Bean
-    @Order(1)
-    public SecurityFilterChain prometheusSecurityFilterChain(
-            HttpSecurity http,
-            @Qualifier("prometheus") UserDetailsService userDetailsService) throws Exception {
-        http
-                .securityMatcher("/actuator/prometheus")
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .anyRequest().hasAnyAuthority("PROMETHEUS", "ADMIN")
-                )
-                .httpBasic(Customizer.withDefaults())
                 .userDetailsService(userDetailsService);
 
         return http.build();

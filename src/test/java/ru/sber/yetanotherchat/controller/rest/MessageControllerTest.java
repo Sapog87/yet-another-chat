@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +15,7 @@ import ru.sber.yetanotherchat.dto.FetchHistoryDto;
 import ru.sber.yetanotherchat.dto.MessageDto;
 import ru.sber.yetanotherchat.exception.PeerNotFoundException;
 import ru.sber.yetanotherchat.exception.UnreachablePeerException;
-import ru.sber.yetanotherchat.security.HttpSecurityConfig;
+import ru.sber.yetanotherchat.security.BaseHttpSecurityConfig;
 import ru.sber.yetanotherchat.service.MessagingService;
 
 import java.security.Principal;
@@ -32,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {MessageController.class})
-@Import(HttpSecurityConfig.class)
+@Import(BaseHttpSecurityConfig.class)
 @WithMockUser(username = "user", authorities = "USER")
 class MessageControllerTest {
 
@@ -40,12 +39,7 @@ class MessageControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    @Qualifier("main")
-    private UserDetailsService userDetailsService1;
-
-    @MockitoBean
-    @Qualifier("prometheus")
-    private UserDetailsService userDetailsService2;
+    private UserDetailsService userDetailsService;
 
     @MockitoBean
     private MessagingService messagingService;

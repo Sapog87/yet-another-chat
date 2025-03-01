@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -15,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.sber.yetanotherchat.dto.Status;
 import ru.sber.yetanotherchat.dto.UserDto;
 import ru.sber.yetanotherchat.exception.PeerNotFoundException;
-import ru.sber.yetanotherchat.security.HttpSecurityConfig;
+import ru.sber.yetanotherchat.security.BaseHttpSecurityConfig;
 import ru.sber.yetanotherchat.service.AccountService;
 import ru.sber.yetanotherchat.service.StatusService;
 
@@ -27,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = {UserController.class})
-@Import(HttpSecurityConfig.class)
+@Import(BaseHttpSecurityConfig.class)
 @WithMockUser(username = "user", authorities = "USER")
 class UserControllerTest {
 
@@ -35,12 +34,7 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    @Qualifier("main")
-    private UserDetailsService userDetailsService1;
-
-    @MockitoBean
-    @Qualifier("prometheus")
-    private UserDetailsService userDetailsService2;
+    private UserDetailsService userDetailsService;
 
     @MockitoBean
     private AccountService accountService;

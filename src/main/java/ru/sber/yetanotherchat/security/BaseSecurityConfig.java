@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.CachingUserDetailsService;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.userdetails.UserCache;
@@ -26,7 +27,8 @@ public class BaseSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean(name = "main")
+    @Bean
+    @Primary
     public UserDetailsService mainUserDetailsService(UserRepository userRepository) {
         UserCache userCache = new SpringCacheBasedUserCache(new ConcurrentMapCache(CACHE_KEY));
         UserDetailsService delegate = new DaoUserDetailsService(userRepository);
