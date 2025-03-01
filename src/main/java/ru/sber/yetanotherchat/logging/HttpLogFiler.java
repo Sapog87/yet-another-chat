@@ -10,6 +10,9 @@ import ru.sber.yetanotherchat.util.LogUtil;
 
 import java.io.IOException;
 
+/**
+ * Фильтр, добавляющий сквозной requestId в логи http запросов.
+ */
 @Component
 public class HttpLogFiler extends HttpFilter {
     @Override

@@ -7,6 +7,9 @@ import org.springframework.messaging.support.ExecutorChannelInterceptor;
 import org.springframework.stereotype.Component;
 import ru.sber.yetanotherchat.util.LogUtil;
 
+/**
+ * Фильтр, добавляющий сквозной requestId в логи websocket запросов.
+ */
 @Component
 public class WebSocketLogInterceptor implements ExecutorChannelInterceptor {
 

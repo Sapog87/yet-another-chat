@@ -148,7 +148,7 @@ public class ChatService {
     /**
      * Находит все чаты пользователя.
      *
-     * @param user - пользователь
+     * @param user пользователь
      * @return {@link List<Chat>} - список чатов, в которых состоит пользователь
      */
     public List<Chat> findAllChatsByUser(User user) {
@@ -157,8 +157,10 @@ public class ChatService {
     }
 
     /**
-     * @param user
-     * @param group
+     * Добавляет пользователя в группу.
+     *
+     * @param user  пользователь
+     * @param group группа
      */
     public void participateInGroup(User user, Chat group) {
         userChatRepository.save(getUserChat(user, group, -group.getId()));

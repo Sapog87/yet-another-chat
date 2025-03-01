@@ -15,7 +15,7 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- * Сервис для работы с группами чатов.
+ * Сервис для работы с групповыми чатами.
  */
 @Service
 @RequiredArgsConstructor

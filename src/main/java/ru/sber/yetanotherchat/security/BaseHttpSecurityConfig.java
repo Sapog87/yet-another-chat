@@ -18,10 +18,9 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 @ComponentScan
 public class BaseHttpSecurityConfig {
 
-    public static final String[] NO_AUTH_URLS = {"/css/*", "/js/*", "/login", "/signup", "/error"};
-    public static final String[] ANY_AUTH_URLS = {"/", "/ws", "/api/**"};
-    public static final String[] ACTUATOR_URLS = {"/actuator/**"};
-    public static final String LOGIN_URL = "/login";
+    private static final String[] NO_AUTH_URLS = {"/css/*", "/js/*", "/login", "/signup", "/error"};
+    private static final String[] ANY_AUTH_URLS = {"/", "/ws", "/api/**"};
+    private static final String[] ACTUATOR_URLS = {"/actuator/**"};
 
     @Bean
     @Order
@@ -41,7 +40,7 @@ public class BaseHttpSecurityConfig {
                 .logout(Customizer.withDefaults())
                 .formLogin(formLogin ->
                         formLogin
-                                .loginPage(LOGIN_URL)
+                                .loginPage("/login")
                                 .defaultSuccessUrl("/")
                                 .successHandler(new SimpleUrlAuthenticationSuccessHandler("/"))
                                 .permitAll()
