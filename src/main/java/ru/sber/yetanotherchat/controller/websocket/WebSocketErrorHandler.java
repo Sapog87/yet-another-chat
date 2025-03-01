@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.sber.yetanotherchat.dto.ServerError;
 import ru.sber.yetanotherchat.exception.InvalidPeerException;
 import ru.sber.yetanotherchat.exception.PeerNotFoundException;
@@ -37,7 +38,7 @@ public class WebSocketErrorHandler {
 
     @MessageExceptionHandler(InvalidPeerException.class)
     public ServerError handleException(InvalidPeerException e) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage(), e);
         return ServerError.builder()
                 .error(BAD_REQUEST.getText())
                 .code(BAD_REQUEST.getCode())
@@ -48,7 +49,7 @@ public class WebSocketErrorHandler {
 
     @MessageExceptionHandler(UnreachablePeerException.class)
     public ServerError handleException(UnreachablePeerException e) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage(), e);
         return ServerError.builder()
                 .error(BAD_REQUEST.getText())
                 .code(BAD_REQUEST.getCode())
@@ -59,7 +60,7 @@ public class WebSocketErrorHandler {
 
     @MessageExceptionHandler(PeerNotFoundException.class)
     public ServerError handleException(PeerNotFoundException e) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage(), e);
         return ServerError.builder()
                 .error(NOT_FOUND.getText())
                 .code(NOT_FOUND.getCode())
@@ -70,8 +71,23 @@ public class WebSocketErrorHandler {
 
     @MessageExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<ServerError> handleException(HandlerMethodValidationException e) {
-        log.error(e.getMessage(), e);
-        var errors = ServerErrorUtil.getStringStringHashMap(e);
+        log.warn(e.getMessage(), e);
+        var errors = ServerErrorUtil.getErrors(e);
+
+        return ResponseEntity
+                .badRequest()
+                .body(ServerError.builder()
+                        .error(BAD_REQUEST.getText())
+                        .code(BAD_REQUEST.getCode())
+                        .timestamp(LocalDateTime.now())
+                        .message(errors.toString())
+                        .build());
+    }
+
+    @MessageExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ServerError> handleException(MethodArgumentTypeMismatchException e) {
+        log.warn(e.getMessage(), e);
+        var errors = ServerErrorUtil.getErrors(e);
 
         return ResponseEntity
                 .badRequest()

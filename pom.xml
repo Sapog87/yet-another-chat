@@ -150,12 +150,15 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
                     <excludes>
-                        <exclude>ru/sber/yetanotherchat/config/*</exclude>
-                        <exclude>ru/sber/yetanotherchat/exception/*</exclude>
-                        <exclude>ru/sber/yetanotherchat/dto/*</exclude>
-                        <exclude>ru/sber/yetanotherchat/entity/*</exclude>
-                        <exclude>ru/sber/yetanotherchat/security/*</exclude>
-                        <exclude>ru/sber/yetanotherchat/YetAnotherChatApplication.java</exclude>
+                        <exclude>ru/sber/yetanotherchat/config/**</exclude>
+                        <exclude>ru/sber/yetanotherchat/exception/**</exclude>
+                        <exclude>ru/sber/yetanotherchat/dto/**</exclude>
+                        <exclude>ru/sber/yetanotherchat/entity/**</exclude>
+                        <exclude>ru/sber/yetanotherchat/security/**</exclude>
+                        <exclude>ru/sber/yetanotherchat/YetAnotherChatApplication.class</exclude>
+                        <exclude>ru/sber/yetanotherchat/controller/websocket/WebSocketErrorHandler.class</exclude>
+                        <exclude>ru/sber/yetanotherchat/controller/rest/RestErrorHandler.class</exclude>
+                        <exclude>ru/sber/yetanotherchat/logging/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>

@@ -9,7 +9,7 @@ const setConnected = (connected) => {
 
 const save = (message) => {
     if (!peers[message.peerId]) peers[message.peerId] = {messages: []};
-    peers[message.peerId].messages.unshift(message);
+    peers[message.peerId].messages.push(message);
 }
 
 async function userSearchRequest(peerId) {
@@ -272,9 +272,9 @@ const loadHistory = (peerId) => {
     container.innerText = ""
 
     if (peers[peerId]) {
-        peers[peerId].messages.toReversed().forEach((message) => {
+        offsetId = peers[peerId].messages.length < 1 ? null : peers[peerId].messages[0].id
+        peers[peerId].messages.forEach((message) => {
                 container.appendChild(getMessage(message))
-                offsetId = message.id
             }
         )
         container.scrollTop = container.scrollHeight;
@@ -313,19 +313,25 @@ async function historyRequest(peerId) {
         if (response.status === 204) {
             peers[peerId].notEnd = false
             notEnd = false
+            offsetId = null
         }
         if (response.status === 200) {
             const json = await response.json()
             json.forEach((message) => {
-                save(message)
+                saveHistoryMessage(message)
                 const scrollTop = container.scrollTop;
                 const m_div = getMessage(message)
                 container.prepend(m_div)
                 container.scrollTop = scrollTop + m_div.clientHeight;
-                offsetId = message.id
+                offsetId = message.id;
             })
         }
     }
+}
+
+const saveHistoryMessage = (message) => {
+    if (!peers[message.peerId]) peers[message.peerId] = {messages: []};
+    peers[message.peerId].messages.unshift(message);
 }
 
 async function leaveGroupRequest() {
