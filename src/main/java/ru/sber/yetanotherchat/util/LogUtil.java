@@ -1,4 +1,4 @@
-package ru.sber.yetanotherchat.logging;
+package ru.sber.yetanotherchat.util;
 
 import lombok.experimental.UtilityClass;
 import org.slf4j.MDC;

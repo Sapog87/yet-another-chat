@@ -5,6 +5,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.support.ExecutorChannelInterceptor;
 import org.springframework.stereotype.Component;
+import ru.sber.yetanotherchat.util.LogUtil;
 
 @Component
 public class WebSocketLogInterceptor implements ExecutorChannelInterceptor {

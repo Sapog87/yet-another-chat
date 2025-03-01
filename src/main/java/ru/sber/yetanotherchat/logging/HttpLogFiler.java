@@ -6,6 +6,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpFilter;
 import org.springframework.stereotype.Component;
+import ru.sber.yetanotherchat.util.LogUtil;
 
 import java.io.IOException;
 

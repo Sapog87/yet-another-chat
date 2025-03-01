@@ -1,7 +1,6 @@
 package ru.sber.yetanotherchat.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -10,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class ServerErrorUtil {
     public static Map<String, String> getStringStringHashMap(HandlerMethodValidationException e) {
         var errors = new HashMap<String, String>();
