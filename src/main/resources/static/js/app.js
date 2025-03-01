@@ -4,21 +4,16 @@ let stompClient = null;
 let searchCategory = "user"
 
 const setConnected = (connected) => {
-    const con = document.getElementById("connection")
-    if (connected) {
-        con.innerText = "Connected"
-    } else {
-        con.innerText = "Connecting..."
-    }
+    document.getElementById("connection").innerText = connected ? "Connected" : "Connecting...";
 }
 
 const save = (message) => {
     if (!peers[message.peerId]) peers[message.peerId] = {messages: []};
-    peers[message.peerId].messages.push(message);
+    peers[message.peerId].messages.unshift(message);
 }
 
 async function userSearchRequest(peerId) {
-    const response = await fetch(window.location.origin + `/api/users/` + peerId);
+    const response = await fetch(`${window.location.origin}/api/users/${peerId}`);
     if (response.status === 200) {
         const user = renderUser(await response.json())
         document.getElementById("chats").appendChild(user)
@@ -26,8 +21,7 @@ async function userSearchRequest(peerId) {
 }
 
 const addChatIfNotExists = (peerId) => {
-    const peer = document.getElementById("chats").querySelector(`[data-peer-id="${peerId}"]`)
-    if (!peer) {
+    if (!document.getElementById("chats").querySelector(`[data-peer-id="${peerId}"]`)) {
         if (parseInt(peerId) > 0) {
             userSearchRequest(peerId);
         }
@@ -53,9 +47,7 @@ function appendChildAndScroll(container, newChild) {
     }
 }
 
-const handleError = (json) => {
-    console.log(JSON.stringify(json))
-}
+const handleError = (json) => console.error(JSON.stringify(json))
 
 let statusTimer;
 const handleStatus = (json) => {
@@ -90,15 +82,13 @@ const connect = () => {
     stompClient.onConnect = (frame) => {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/user/topic/update', (update) => {
-            handleUpdate(JSON.parse(update.body));
-        });
-        stompClient.subscribe('/user/topic/error', (error) => {
-            handleError(JSON.parse(error.body));
-        });
-        stompClient.subscribe('/topic/status', (status) => {
-            handleStatus(JSON.parse(status.body));
-        });
+
+        stompClient.subscribe('/user/topic/update', (update) =>
+            handleUpdate(JSON.parse(update.body)));
+        stompClient.subscribe('/user/topic/error', (error) =>
+            handleError(JSON.parse(error.body)));
+        stompClient.subscribe('/topic/status', (status) =>
+            handleStatus(JSON.parse(status.body)));
     };
     stompClient.onWebSocketError = (error) => {
         setConnected(false);
@@ -282,7 +272,7 @@ const loadHistory = (peerId) => {
     container.innerText = ""
 
     if (peers[peerId]) {
-        peers[peerId].messages.forEach((message) => {
+        peers[peerId].messages.toReversed().forEach((message) => {
                 container.appendChild(getMessage(message))
                 offsetId = message.id
             }
@@ -339,7 +329,7 @@ async function historyRequest(peerId) {
 }
 
 async function leaveGroupRequest() {
-    const response = await fetch(window.location.origin + `/api/groups/` + peerId + "/members", {method: "DELETE"});
+    const response = await fetch(`${window.location.origin}/api/groups/${peerId}/members`, {method: "DELETE"});
     if (response.status === 200) {
         document.getElementById("name").innerText = ""
         document.getElementById("chat-messages").innerText = ""
@@ -490,7 +480,9 @@ const handleCreateGroup = () => {
 async function createGroupRequest(value) {
     const response = await fetch(window.location.origin + `/api/groups?name=${value}`, {method: "POST"});
     if (response.status === 201) {
-        const group = renderGroup(await response.json())
+        const json = await response.json()
+        peers[json.peerId.toString()] = {messages: [], notEnd: false};
+        const group = renderGroup(json)
         document.getElementById("chats").appendChild(group)
     }
 }
