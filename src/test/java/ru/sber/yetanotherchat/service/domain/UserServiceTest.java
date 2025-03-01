@@ -52,7 +52,7 @@ class UserServiceTest {
     @DisplayName("Успешное создание пользователя")
     void createUser_ShouldReturnCreatedUser() {
         var role = new Role();
-        role.setUserRole(Role.UserRole.USER);
+        role.setRole(Role.UserRole.USER);
 
         doReturn("encodedPassword").when(passwordEncoder).encode("password");
         doReturn(role).when(roleRepository).findByRole(Role.UserRole.USER);
