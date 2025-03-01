@@ -49,25 +49,25 @@ class ChatServiceTest {
     @Test
     @DisplayName("Должен вернуть чат, если он уже существует")
     void testFindOrCreatePersonalChatWhenChatExists() {
-        doReturn(Optional.of(chat)).when(chatRepository).findPersonalChatByUsers(user, recipient);
+        doReturn(Optional.of(chat)).when(chatRepository).findPersonalChatByUserAndPeerId(user, recipient.getId());
 
         var result = chatService.findOrCreatePersonalChat(user, recipient);
 
         assertEquals(chat, result);
-        verify(chatRepository, times(1)).findPersonalChatByUsers(user, recipient);
+        verify(chatRepository, times(1)).findPersonalChatByUserAndPeerId(user, recipient.getId());
     }
 
     @Test
     @DisplayName("Должен создать новый чат, если чата не существует")
     void testFindOrCreatePersonalChatWhenChatDoesNotExist() {
-        doReturn(Optional.empty()).when(chatRepository).findPersonalChatByUsers(user, recipient);
+        doReturn(Optional.empty()).when(chatRepository).findPersonalChatByUserAndPeerId(user, recipient.getId());
         doReturn(chat).when(chatRepository).save(any(Chat.class));
         doReturn(new UserChat()).when(userChatRepository).save(any(UserChat.class));
 
         var result = chatService.findOrCreatePersonalChat(user, recipient);
 
         assertEquals(chat, result);
-        verify(chatRepository, times(1)).findPersonalChatByUsers(user, recipient);
+        verify(chatRepository, times(1)).findPersonalChatByUserAndPeerId(user, recipient.getId());
         verify(chatRepository, times(1)).save(any(Chat.class));
         verify(userChatRepository, times(2)).save(any(UserChat.class));
     }
@@ -75,7 +75,7 @@ class ChatServiceTest {
     @Test
     @DisplayName("Должен выбросить исключение, если чат не найден")
     void testFindPersonalChatThrowsExceptionWhenChatNotFound() {
-        doReturn(Optional.empty()).when(chatRepository).findPersonalChatByUsers(user, recipient);
+        doReturn(Optional.empty()).when(chatRepository).findPersonalChatByUserAndPeerId(user, recipient.getId());
 
         assertThrows(ChatNotFoundException.class, () -> chatService.findPersonalChat(user, recipient));
     }

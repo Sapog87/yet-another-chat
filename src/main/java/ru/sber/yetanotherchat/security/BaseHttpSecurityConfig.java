@@ -1,10 +1,13 @@
 package ru.sber.yetanotherchat.security;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
@@ -12,17 +15,27 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
  * Конфигурация фильтров Spring Security для HTTP-запросов.
  */
 @Configuration
-public class HttpSecurityConfig {
+@ComponentScan
+public class BaseHttpSecurityConfig {
+
+    private static final String[] NO_AUTH_URLS = {"/css/*", "/js/*", "/login", "/signup", "/error"};
+    private static final String[] ANY_AUTH_URLS = {"/", "/ws", "/api/**"};
+    private static final String[] ACTUATOR_URLS = {"/actuator/**"};
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            UserDetailsService userDetailsService
+    ) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/css/*", "/js/*").permitAll()
-                                .requestMatchers("/login", "/signup", "/error").permitAll()
-                                .requestMatchers("/actuator/**").hasAnyAuthority("ADMIN")
-                                .anyRequest().authenticated()
+                                .requestMatchers(NO_AUTH_URLS).permitAll()
+                                .requestMatchers(ANY_AUTH_URLS).hasAnyAuthority("ADMIN", "USER")
+                                .requestMatchers(ACTUATOR_URLS).hasAuthority("ADMIN")
+                                .anyRequest().denyAll()
                 )
                 .logout(Customizer.withDefaults())
                 .formLogin(formLogin ->
@@ -31,8 +44,8 @@ public class HttpSecurityConfig {
                                 .defaultSuccessUrl("/")
                                 .successHandler(new SimpleUrlAuthenticationSuccessHandler("/"))
                                 .permitAll()
-                );
-
+                )
+                .userDetailsService(userDetailsService);
 
         return http.build();
     }

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -18,7 +19,6 @@ import ru.sber.yetanotherchat.dto.UserResponse;
 import ru.sber.yetanotherchat.service.AccountService;
 import ru.sber.yetanotherchat.service.StatusService;
 
-import java.security.Principal;
 import java.util.List;
 
 import static ru.sber.yetanotherchat.dto.Status.OFFLINE;
@@ -39,10 +39,9 @@ public class UserController {
     /**
      * Поиск пользователей по имени или его части с поддержкой пагинации.
      *
-     * @param name      Имя пользователя (не может быть пустым).
-     * @param page      Номер страницы (по умолчанию 0).
-     * @param pageSize  Размер страницы (по умолчанию 20).
-     * @param principal Текущий пользователь.
+     * @param name     Имя пользователя (не может быть пустым).
+     * @param page     Номер страницы (по умолчанию 0).
+     * @param pageSize Размер страницы (по умолчанию 20).
      * @return {@link ResponseEntity<List<UserResponse>>}
      */
     @Operation(summary = "Поиск пользователей")
@@ -82,11 +81,12 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<List<UserResponse>> getUsers(
-            @RequestParam(name = "name") @NotBlank String name,
+            @RequestParam(name = "name") @NotBlank @Size(max = 255) String name,
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-            @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer pageSize,
-            Principal principal) {
-        log.info("Запрос на поиск пользователей с именем = {} от пользователя {}", name, principal.getName());
+            @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
+        log.info("Start UserController::getUsers with name: {}, page: {}, pageSize: {}",
+                name, page, pageSize);
+
         var users = accountService.getUsersByName(name, page, pageSize);
 
         if (users.isEmpty()) {
@@ -107,8 +107,7 @@ public class UserController {
     /**
      * Поиск пользователя по id.
      *
-     * @param peerId    Идентификатор пользователя (должен быть положительным).
-     * @param principal Информация о текущем пользователе.
+     * @param peerId Идентификатор пользователя (должен быть положительным).
      * @return {@link ResponseEntity<UserResponse>}
      */
     @Operation(summary = "Поиск пользователя по id")
@@ -146,11 +145,9 @@ public class UserController {
             path = "/users/{peerId}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<UserResponse> getUser(
-            @PathVariable @Positive Long peerId,
-            Principal principal) {
-        log.info("Запрос на поиск пользователей с id = {} от пользователя {}",
-                peerId, principal.getName());
+    public ResponseEntity<UserResponse> getUser(@PathVariable @Positive Long peerId) {
+        log.info("Start UserController::getUser with peerId: {}", peerId);
+
         var userDto = accountService.getUserById(peerId);
 
         return ResponseEntity

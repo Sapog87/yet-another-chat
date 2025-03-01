@@ -1,0 +1,67 @@
+services:
+  service:
+    build: .
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      SERVER_PORT: 8080
+      PROMETHEUS_USERNAME: prometheus
+      PROMETHEUS_PASSWORD: prometheus
+    networks:
+      - backend
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16.2
+    restart: on-failure
+    volumes:
+      - db_data:/var/lib/postgresql/db_data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - backend
+
+  prometheus:
+    image: prom/prometheus
+    restart: on-failure
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - backend
+    depends_on:
+      - service
+
+  grafana:
+    image: grafana/grafana-oss
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - backend
+
+volumes:
+  db_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  backend:

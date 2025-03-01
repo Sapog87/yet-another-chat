@@ -15,7 +15,7 @@ import java.security.Principal;
 import java.util.List;
 
 /**
- * Сервис для работы с группами чатов.
+ * Сервис для работы с групповыми чатами.
  */
 @Service
 @RequiredArgsConstructor
@@ -79,8 +79,7 @@ public class GroupService {
         try {
             var group = getGroup(groupId);
             if (!chatService.isMemberOfChat(user, group)) {
-                group.getMembers().add(user);
-                user.getChats().add(group);
+                chatService.participateInGroup(user, group);
             }
             return GroupDto.builder()
                     .id(-groupId)

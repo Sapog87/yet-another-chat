@@ -13,7 +13,7 @@ import ru.sber.yetanotherchat.service.domain.UserService;
 import java.util.List;
 
 /**
- * Интерфейс для работы с пользователями.
+ * Сервис для работы с пользователями.
  */
 @Service
 @RequiredArgsConstructor

@@ -88,9 +88,11 @@ class GroupServiceTest {
     void participateInGroup_ShouldAddUserToGroup() {
         doReturn(group).when(chatService).findChatById(anyLong());
 
-        assertDoesNotThrow(() -> groupService.participateInGroup(-1L, principal));
-        assertTrue(group.getMembers().contains(user));
-        assertTrue(user.getChats().contains(group));
+        var result = assertDoesNotThrow(() -> groupService.participateInGroup(-1L, principal));
+
+        assertEquals(-1L, result.getId());
+        assertEquals("group", result.getName());
+        assertTrue(result.getIsMember());
 
         verify(chatService).findChatById(1L);
     }

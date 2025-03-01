@@ -32,7 +32,9 @@ public class WebSocketMessageController {
     @MessageMapping("/chat/message")
     @SendToUser("/topic/update")
     public MessageDto message(@Payload @Valid SendMessageDto sendMessageDto, Principal principal) {
-        log.info("Запрос на отправку сообщения {} от пользователя {}", sendMessageDto, principal.getName());
+        log.info("Start WebSocketMessageController::message with sendMessageDto: {}",
+                sendMessageDto);
+
         return service.sendMessage(sendMessageDto, principal);
     }
 

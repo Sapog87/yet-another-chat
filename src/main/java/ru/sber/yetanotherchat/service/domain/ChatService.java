@@ -33,12 +33,12 @@ public class ChatService {
      */
     @Transactional
     public Chat findOrCreatePersonalChat(User user, User recipient) {
-        return chatRepository.findPersonalChatByUsers(user, recipient)
+        return chatRepository.findPersonalChatByUserAndPeerId(user, recipient.getId())
                 .orElseGet(() -> {
                     var chat = chatRepository.save(getPersonalChat(user, recipient));
-                    userChatRepository.save(getUserChat(user, chat));
+                    userChatRepository.save(getUserChat(user, chat, recipient.getId()));
                     if (!user.equals(recipient)) {
-                        userChatRepository.save(getUserChat(recipient, chat));
+                        userChatRepository.save(getUserChat(recipient, chat, user.getId()));
                     }
                     return chat;
                 });
@@ -54,7 +54,7 @@ public class ChatService {
      * @throws ChatNotFoundException если чат не найден
      */
     public Chat findPersonalChat(User user, User recipient) {
-        return chatRepository.findPersonalChatByUsers(user, recipient)
+        return chatRepository.findPersonalChatByUserAndPeerId(user, recipient.getId())
                 .orElseThrow(() -> new ChatNotFoundException(
                         "Личного чата между пользователями {%d} и {%d} не существует"
                                 .formatted(user.getId(), recipient.getId()))
@@ -84,10 +84,11 @@ public class ChatService {
         return chat;
     }
 
-    private UserChat getUserChat(User user, Chat chat) {
+    private UserChat getUserChat(User user, Chat chat, Long peerId) {
         var userChat = new UserChat();
         userChat.setUser(user);
         userChat.setChat(chat);
+        userChat.setPeerId(peerId);
         return userChat;
     }
 
@@ -111,9 +112,9 @@ public class ChatService {
      */
     @Transactional
     public Chat createGroupChat(User user, String name) {
-        var chat = chatRepository.save(getGroupChat(user, name));
-        userChatRepository.save(getUserChat(user, chat));
-        return chat;
+        var group = chatRepository.save(getGroupChat(user, name));
+        userChatRepository.save(getUserChat(user, group, -group.getId()));
+        return group;
     }
 
     private Chat getGroupChat(User firstUser, String name) {
@@ -147,11 +148,21 @@ public class ChatService {
     /**
      * Находит все чаты пользователя.
      *
-     * @param user - пользователь
+     * @param user пользователь
      * @return {@link List<Chat>} - список чатов, в которых состоит пользователь
      */
     public List<Chat> findAllChatsByUser(User user) {
         var chats = userChatRepository.findAllByUser(user);
         return chats.stream().map(UserChat::getChat).toList();
+    }
+
+    /**
+     * Добавляет пользователя в группу.
+     *
+     * @param user  пользователь
+     * @param group группа
+     */
+    public void participateInGroup(User user, Chat group) {
+        userChatRepository.save(getUserChat(user, group, -group.getId()));
     }
 }

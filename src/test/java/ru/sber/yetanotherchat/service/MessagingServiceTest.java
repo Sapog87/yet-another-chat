@@ -258,11 +258,12 @@ class MessagingServiceTest {
         doReturn(chat).when(chatService).findChatById(anyLong());
         doReturn(false).when(chatService).isMemberOfChat(any(User.class), any(Chat.class));
 
+        var fetchHistoryDto = FetchHistoryDto.builder()
+                .peerId(-chat.getId())
+                .limit(0)
+                .offsetId(null)
+                .build();
 
-        var sendMessageDto = new SendMessageDto();
-        sendMessageDto.setPeerId(-chat.getId());
-        sendMessageDto.setText("Hello");
-
-        assertThrows(UnreachablePeerException.class, () -> messagingService.sendMessage(sendMessageDto, principal));
+        assertThrows(UnreachablePeerException.class, () -> messagingService.fetchHistory(fetchHistoryDto, principal));
     }
 }
