@@ -92,8 +92,8 @@ public class MessageController {
             @RequestParam(name = "offsetId", required = false) @Positive Long offsetId,
             @RequestParam(name = "limit", required = false, defaultValue = "0") @PositiveOrZero Integer limit,
             Principal principal) {
-        log.info("Запрос на получение истории сообщений c peer = {} от пользователя {}",
-                peerId, principal.getName());
+        log.info("Start MessageController::history with peerId: {}, offsetId: {}, limit: {}",
+                peerId, offsetId, limit);
 
         var messageDtos = service.fetchHistory(
                 FetchHistoryDto.builder()

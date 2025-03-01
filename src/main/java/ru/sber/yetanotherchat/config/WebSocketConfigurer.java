@@ -2,10 +2,12 @@ package ru.sber.yetanotherchat.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import ru.sber.yetanotherchat.logging.WebSocketLogInterceptor;
 
 /**
  * Конфигурация WebSocket для приложения с использованием STOMP-протокола.
@@ -14,6 +16,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
 public class WebSocketConfigurer implements WebSocketMessageBrokerConfigurer {
+
+    private final WebSocketLogInterceptor logInterceptor;
 
     /**
      * Путь для подключения к WebSocket.
@@ -46,5 +50,10 @@ public class WebSocketConfigurer implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint(WEBSOCKET_STOMP_PATH);
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(logInterceptor);
     }
 }

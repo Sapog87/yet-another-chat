@@ -17,6 +17,12 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 @Configuration
 @ComponentScan
 public class BaseHttpSecurityConfig {
+
+    public static final String[] NO_AUTH_URLS = {"/css/*", "/js/*", "/login", "/signup", "/error"};
+    public static final String[] ANY_AUTH_URLS = {"/", "/ws", "/api/**"};
+    public static final String[] ACTUATOR_URLS = {"/actuator/**"};
+    public static final String LOGIN_URL = "/login";
+
     @Bean
     @Order
     public SecurityFilterChain securityFilterChain(
@@ -27,16 +33,15 @@ public class BaseHttpSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/css/*", "/js/*").permitAll()
-                                .requestMatchers("/login", "/signup", "/error").permitAll()
-                                .requestMatchers("/", "/ws", "/api/**").hasAnyAuthority("ADMIN", "USER")
-                                .requestMatchers("/actuator/**").hasAuthority("ADMIN")
+                                .requestMatchers(NO_AUTH_URLS).permitAll()
+                                .requestMatchers(ANY_AUTH_URLS).hasAnyAuthority("ADMIN", "USER")
+                                .requestMatchers(ACTUATOR_URLS).hasAuthority("ADMIN")
                                 .anyRequest().denyAll()
                 )
                 .logout(Customizer.withDefaults())
                 .formLogin(formLogin ->
                         formLogin
-                                .loginPage("/login")
+                                .loginPage(LOGIN_URL)
                                 .defaultSuccessUrl("/")
                                 .successHandler(new SimpleUrlAuthenticationSuccessHandler("/"))
                                 .permitAll()

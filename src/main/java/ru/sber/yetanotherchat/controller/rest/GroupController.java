@@ -70,8 +70,7 @@ public class GroupController {
     public ResponseEntity<GroupResponse> createGroup(
             @RequestParam(value = "name") @NotBlank @Size(max = 255) String name,
             Principal principal) {
-        log.info("Запрос на создание группы с именем {} от пользователя {}",
-                name, principal.getName());
+        log.info("Start GroupController::createGroup with name: {}", name);
 
         var groupDto = groupService.createGroup(name, principal);
 
@@ -135,8 +134,8 @@ public class GroupController {
             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(name = "pageSize", required = false, defaultValue = "20") Integer pageSize,
             Principal principal) {
-        log.info("Запрос на поиск групп с именем = {} от пользователя {}",
-                name, principal.getName());
+        log.info("Start GroupController::getGroups with name: {}, page: {}, pageSize: {}",
+                name, page, pageSize);
 
         var groups = groupService
                 .getGroupsByName(name, page, pageSize, principal);
@@ -201,8 +200,7 @@ public class GroupController {
     public ResponseEntity<GroupResponse> participateInGroup(
             @PathVariable("peerId") @Negative Long peerId,
             Principal principal) {
-        log.info("Запрос на вступление в группу с peerId = {} от пользователя {}",
-                peerId, principal.getName());
+        log.info("Start GroupController::participateInGroup with peerId: {}", peerId);
 
         var groupDto = groupService.participateInGroup(peerId, principal);
 
@@ -259,8 +257,7 @@ public class GroupController {
     public ResponseEntity<GroupResponse> leaveGroup(
             @PathVariable("peerId") @Negative Long peerId,
             Principal principal) {
-        log.info("Запрос на выход из группы с peerId = {} от пользователя {}",
-                peerId, principal.getName());
+        log.info("Start GroupController::leaveGroup with peerId: {}", peerId);
 
         var groupDto = groupService.leaveGroup(peerId, principal);
 

@@ -2,6 +2,7 @@ package ru.sber.yetanotherchat.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import ru.sber.yetanotherchat.service.AccountService;
 /**
  * Контроллер для регистрации и авторизации пользователей.
  */
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
@@ -40,8 +42,11 @@ public class AuthController {
      * @return view
      */
     @PostMapping("/signup")
-    public String signup(@ModelAttribute("user")
-                         @Valid UserRegistrationDto createDto) {
+    public String signup(
+            @ModelAttribute("user")
+            @Valid UserRegistrationDto createDto) {
+        log.info("Start AuthController::signup");
+
         try {
             userService.registerUser(createDto);
         } catch (UserAlreadyExistsException e) {

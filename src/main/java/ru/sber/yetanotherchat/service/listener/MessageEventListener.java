@@ -24,6 +24,9 @@ public class MessageEventListener {
      */
     @TransactionalEventListener
     protected void sendMessages(MessageReceivedEvent event) {
+        log.info("Start MessageEventListener::sendMessages with messageId: {}",
+                event.getMessage().getId());
+
         event.getRecipients()
                 .forEach(username ->
                         messagingTemplate.convertAndSendToUser(
@@ -32,6 +35,5 @@ public class MessageEventListener {
                                 event.getMessage()
                         )
                 );
-        log.info("Сообщение {{}} отправлено получателям", event.getMessage().getId());
     }
 }

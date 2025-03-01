@@ -49,7 +49,7 @@ public class StatusService {
      */
     @EventListener
     protected void handle(SessionDisconnectEvent event) {
-        log.info("Received session disconnect event: {}", event);
+        log.info("Handle session disconnected event");
 
         var user = userService.findUserByUsername(Objects.requireNonNull(event.getUser()).getName());
 
@@ -77,7 +77,7 @@ public class StatusService {
      */
     @EventListener
     protected void handle(SessionConnectedEvent event) {
-        log.info("Received session connected event: {}", event);
+        log.info("Handle session connected event");
 
         var user = userService.findUserByUsername(Objects.requireNonNull(event.getUser()).getName());
 

@@ -4,7 +4,9 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%-20.20thread] %-5level %-40.40logger{20} -%kvp- %msg%n</pattern>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%-36X{requestId}] [%-20.20thread] %-5level %-40.40logger{20} -%kvp- %msg%n
+            </pattern>
         </encoder>
     </appender>
 
@@ -12,7 +14,9 @@
         <file>${LOGS}/app.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%-20.20thread] %-5level %-40.40logger{20} -%kvp- %msg%n</pattern>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%-36X{requestId}] [%-20.20thread] %-5level %-40.40logger{20} -%kvp- %msg%n
+            </pattern>
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
