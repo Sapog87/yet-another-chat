@@ -4,10 +4,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
@@ -26,7 +31,7 @@ public class BaseHttpSecurityConfig {
     @Order
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            UserDetailsService userDetailsService
+            AuthenticationManager authenticationManager
     ) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -45,8 +50,26 @@ public class BaseHttpSecurityConfig {
                                 .successHandler(new SimpleUrlAuthenticationSuccessHandler("/"))
                                 .permitAll()
                 )
-                .userDetailsService(userDetailsService);
+                .authenticationManager(authenticationManager);
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationProvider authenticationProvider) {
+        var providerManager = new ProviderManager(authenticationProvider);
+        providerManager.setEraseCredentialsAfterAuthentication(false);
+        return providerManager;
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+        var provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
     }
 }

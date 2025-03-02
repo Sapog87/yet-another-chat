@@ -99,6 +99,7 @@ const connect = () => {
         console.error('Additional details: ' + frame.body);
     };
     stompClient.reconnect_delay = 1000;
+    stompClient.debug = (message) => console.log(message)
     stompClient.activate();
 }
 
@@ -293,6 +294,7 @@ const handleSearchOnScroll = (element) => {
     if (element.scrollTop === 0) {
         clearTimeout(historyTimer)
         historyTimer = setTimeout(() => {
+            offsetId = peers[peerId].messages.length < 1 ? null : peers[peerId].messages[0].id
             historyRequest(peerId)
         }, 100)
     }

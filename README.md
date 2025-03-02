@@ -9,11 +9,12 @@
 - **Java 17**
 - **Maven**
 - **Spring Boot 3**
-  - **Spring Web**
-  - **Spring WebSocket**
-  - **Spring Security**
-  - **Spring Data JPA**
-  - **SpringDoc OpenAPI**
+    - **Spring Web**
+    - **Spring WebSocket**
+    - **Spring Security**
+    - **Spring Data JPA**
+    - **SpringDoc OpenAPI**
+- **RabbitMQ**
 - **PostgreSQL**
 - **Liquibase**
 - **Thymeleaf**
@@ -52,7 +53,7 @@ docker pull ghcr.io/sapog87/yet-another-chat
 
 | Переменная            | Описание                            | Пример значений |
 |-----------------------|-------------------------------------|-----------------|
-| `DB_HOST`             | Доменное имя сервера с базой данных | `example.com`   |
+| `DB_HOST`             | Хост сервера с базой данных         | `example.com`   |
 | `DB_PORT`             | Порт базы данных                    | `5432`          |
 | `DB_NAME`             | Имя базы данных                     | `postgres`      |
 | `DB_USERNAME`         | Имя пользователя базы данных        | `postgres`      |
@@ -60,3 +61,7 @@ docker pull ghcr.io/sapog87/yet-another-chat
 | `SERVER_PORT`         | Порт для приложение                 | `8080`          |
 | `PROMETHEUS_USERNAME` | Username для подключения Prometheus | `prometheus`    |
 | `PROMETHEUS_PASSWORD` | Пароль для подключения Prometheus   | `prometheus`    |
+| `RABBITMQ_HOST`       | Хост для подключения к RabbitMQ     | `example.com`   |
+| `RABBITMQ_PORT`       | Порт для подключения к RabbitMQ     | `61613`         |
+| `RABBITMQ_USERNAME`   | Username для подключения к RabbitMQ | `rabbitmq`      |
+| `RABBITMQ_PASSWORD`   | Пароль для подключения к RabbitMQ   | `rabbitmq`      |

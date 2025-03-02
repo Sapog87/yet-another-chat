@@ -9,3 +9,11 @@ scrape_configs:
     basic_auth:
       username: 'prometheus'
       password: 'prometheus'
+
+  - job_name: 'rabbitmq-scrape'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: [ 'rabbitmq:15692' ]
+    basic_auth:
+      username: 'rabbitmq'
+      password: 'rabbitmq'
