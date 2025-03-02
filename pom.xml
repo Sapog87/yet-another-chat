@@ -159,6 +159,7 @@
                         <exclude>ru/sber/yetanotherchat/controller/websocket/WebSocketErrorHandler.class</exclude>
                         <exclude>ru/sber/yetanotherchat/controller/rest/RestErrorHandler.class</exclude>
                         <exclude>ru/sber/yetanotherchat/logging/**</exclude>
+                        <exclude>ru/sber/yetanotherchat/util/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>

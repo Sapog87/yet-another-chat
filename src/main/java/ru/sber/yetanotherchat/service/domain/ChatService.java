@@ -66,8 +66,8 @@ public class ChatService {
      * Если чат не найден, выбрасывает исключение ChatNotFoundException.
      *
      * @param id id чата
-     * @return Chat - найденный чат
-     * @throws ChatNotFoundException - если чат с данным id не найден
+     * @return {@link Chat} - найденный чат
+     * @throws ChatNotFoundException если чат с данным id не найден
      */
     public Chat findChatById(Long id) {
         return chatRepository.findById(id)
