@@ -1,6 +1,7 @@
 package ru.sber.yetanotherchat.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +18,13 @@ import ru.sber.yetanotherchat.service.domain.MessageService;
 import ru.sber.yetanotherchat.service.domain.UserService;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Сервис для работы с сообщениями.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessagingService {
@@ -36,17 +39,17 @@ public class MessagingService {
      * Обрабатывает отправку сообщения пользователем.
      * Сообщение будет отправлено в соответствующий чат.
      *
-     * @param sendMessageDto объект, содержащий данные для отправки сообщения
-     * @param sender         пользователь, отправляющий сообщение
+     * @param dto    объект, содержащий данные для отправки сообщения
+     * @param sender пользователь, отправляющий сообщение
      * @return {@link MessageDto}
      */
     @Transactional
-    public MessageDto sendMessage(SendMessageDto sendMessageDto, Principal sender) {
+    public MessageDto sendMessage(SendMessageDto dto, Principal sender) {
         var user = userService.findUserByUsername(sender.getName());
 
-        var peerId = sendMessageDto.getPeerId();
-        var chat = getChat(peerId, user, false);
-        var message = messageService.createMessage(user, chat, sendMessageDto.getText());
+        var peerId = dto.getPeerId();
+        var chat = getChatForSend(peerId, user);
+        var message = messageService.createMessage(user, chat, dto.getText());
 
         var members = userService.findChatMembers(chat);
         var reversePeerId = peerId < 0 ? peerId : user.getId();
@@ -61,53 +64,77 @@ public class MessagingService {
      * <p>
      * Этот метод используется для получения истории сообщений между двумя пользователями.
      *
-     * @param fetchHistoryDto объект, содержащий данные для получения сообщения
-     * @param sender          пользователь, запрашивающий историю
+     * @param dto    объект, содержащий данные для получения сообщения
+     * @param sender пользователь, запрашивающий историю
      * @return {@link List<MessageDto>}
      */
     @Transactional(readOnly = true)
-    public List<MessageDto> fetchHistory(FetchHistoryDto fetchHistoryDto, Principal sender) {
+    public List<MessageDto> fetchHistory(FetchHistoryDto dto, Principal sender) {
         var user = userService.findUserByUsername(sender.getName());
+        var limit = dto.getLimit();
+        var peerId = dto.getPeerId();
+        var offsetId = dto.getOffsetId();
+        try {
+            var chat = getChatForRead(peerId, user);
+            var messages = messageService.fetchMessagesFromChat(chat, limit, offsetId);
 
-        var peerId = fetchHistoryDto.getPeerId();
-        var limit = fetchHistoryDto.getLimit();
-        var offsetId = fetchHistoryDto.getOffsetId();
-        var chat = getChat(peerId, user, true);
-        var messages = messageService.fetchMessagesFromChat(chat, limit, offsetId);
-
-        return messages.stream()
-                .map(message ->
-                        message.getSender().equals(user)
-                                ? getMessageDto(peerId, message, true)
-                                : getMessageDto(peerId, message, false)
-                ).toList();
+            return messages.stream()
+                    .map(message -> {
+                        var outgoing = message.getSender().equals(user);
+                        return getMessageDto(peerId, message, outgoing);
+                    })
+                    .toList();
+        } catch (PersonalChatNotExitsException e) {
+            log.warn(e.getMessage(), e);
+            return Collections.emptyList();
+        }
     }
 
 
-    private Chat getChat(Long peerId, User user, boolean readOnly) {
-        try {
-            // если peerId > 0 => пользователь с id = peerId
-            // если peerId < 0 => группа с id = -peerId
-            if (peerId > 0) {
-                var recipient = userService.findUserById(peerId);
-                if (readOnly) {
-                    return chatService.findPersonalChat(user, recipient);
-                }
-                return chatService.findOrCreatePersonalChat(user, recipient);
-            } else if (peerId < 0) {
-                var chatId = Math.abs(peerId);
-                return getGroup(chatId, user);
+    private Chat getChatForSend(Long peerId, User user) {
+        if (peerId == 0) {
+            throw new InvalidPeerException("peerId не может быть 0");
+        }
+
+        if (peerId > 0) {
+            var recipient = getUser(peerId);
+            return chatService.findOrCreatePersonalChat(user, recipient);
+        }
+
+        return getGroup(Math.abs(peerId), user);
+    }
+
+    private Chat getChatForRead(Long peerId, User user) {
+        if (peerId == 0) {
+            throw new InvalidPeerException("peerId не может быть 0");
+        }
+
+        if (peerId > 0) {
+            var recipient = getUser(peerId);
+            try {
+                return chatService.findPersonalChat(user, recipient);
+            } catch (ChatNotFoundException e) {
+                throw new PersonalChatNotExitsException(
+                        "Личного чата между пользователями {%d} и {%d} не существует"
+                                .formatted(user.getId(), recipient.getId()), e);
             }
-            throw new InvalidPeerException("Peer id не может быть 0");
-        } catch (UserNotFoundException | ChatNotFoundException e) {
+        }
+
+        return getGroup(Math.abs(peerId), user);
+    }
+
+    private User getUser(Long id) {
+        try {
+            return userService.findUserById(id);
+        } catch (UserNotFoundException e) {
             throw new PeerNotFoundException(
-                    "Peer с таким id {%d} не найден"
-                            .formatted(peerId), e);
+                    "Пользователь с id {%d} не найден"
+                            .formatted(id), e);
         }
     }
 
     private Chat getGroup(Long id, User user) {
-        var chat = chatService.findChatById(id);
+        var chat = getChat(id);
         if (Boolean.FALSE.equals(chat.getIsGroup())) {
             throw new PeerNotFoundException(
                     "Группа с таким id {%d} не найдена"
@@ -119,6 +146,16 @@ public class MessagingService {
                             .formatted(user.getId(), id));
         }
         return chat;
+    }
+
+    private Chat getChat(Long id) {
+        try {
+            return chatService.findChatById(id);
+        } catch (ChatNotFoundException e) {
+            throw new PeerNotFoundException(
+                    "Группа с таким id {%d} не найдена"
+                            .formatted(id), e);
+        }
     }
 
     private void publishMessageReceivedEvent(Message message, List<User> members, Long peerId, User sender) {

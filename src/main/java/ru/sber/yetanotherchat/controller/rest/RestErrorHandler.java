@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.sber.yetanotherchat.dto.ServerError;
 import ru.sber.yetanotherchat.exception.InvalidPeerException;
 import ru.sber.yetanotherchat.exception.PeerNotFoundException;
@@ -28,21 +29,6 @@ import static ru.sber.yetanotherchat.exception.ErrorStatuses.*;
                 UserController.class
         })
 public class RestErrorHandler {
-    @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<ServerError> handleException(HandlerMethodValidationException e) {
-        log.error(e.getMessage(), e);
-        var errors = ServerErrorUtil.getStringStringHashMap(e);
-
-        return ResponseEntity
-                .badRequest()
-                .body(ServerError.builder()
-                        .error(BAD_REQUEST.getText())
-                        .code(BAD_REQUEST.getCode())
-                        .timestamp(LocalDateTime.now())
-                        .message(errors.toString())
-                        .build());
-    }
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ServerError> handleException(RuntimeException e) {
         log.error(e.getMessage(), e);
@@ -56,9 +42,39 @@ public class RestErrorHandler {
                         .build());
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ServerError> handleException(MethodArgumentTypeMismatchException e) {
+        log.warn(e.getMessage(), e);
+        var errors = ServerErrorUtil.getErrors(e);
+
+        return ResponseEntity
+                .badRequest()
+                .body(ServerError.builder()
+                        .error(BAD_REQUEST.getText())
+                        .code(BAD_REQUEST.getCode())
+                        .timestamp(LocalDateTime.now())
+                        .message(errors.toString())
+                        .build());
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ServerError> handleException(HandlerMethodValidationException e) {
+        log.warn(e.getMessage(), e);
+        var errors = ServerErrorUtil.getErrors(e);
+
+        return ResponseEntity
+                .badRequest()
+                .body(ServerError.builder()
+                        .error(BAD_REQUEST.getText())
+                        .code(BAD_REQUEST.getCode())
+                        .timestamp(LocalDateTime.now())
+                        .message(errors.toString())
+                        .build());
+    }
+
     @ExceptionHandler(InvalidPeerException.class)
     public ResponseEntity<ServerError> handleException(InvalidPeerException e) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage(), e);
         return ResponseEntity
                 .badRequest()
                 .body(ServerError.builder()
@@ -71,7 +87,7 @@ public class RestErrorHandler {
 
     @ExceptionHandler(UnreachablePeerException.class)
     public ResponseEntity<ServerError> handleException(UnreachablePeerException e) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage(), e);
         return ResponseEntity
                 .badRequest()
                 .body(ServerError.builder()
@@ -84,7 +100,7 @@ public class RestErrorHandler {
 
     @ExceptionHandler(PeerNotFoundException.class)
     public ResponseEntity<ServerError> handleException(PeerNotFoundException e) {
-        log.error(e.getMessage(), e);
+        log.warn(e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ServerError.builder()
