@@ -55,7 +55,7 @@ CREATE TABLE message
 -- changeset Sergey:6
 CREATE INDEX idx_app_user_name ON app_user (name);
 CREATE INDEX idx_chat_group_chat_name ON chat (group_chat_name);
-CREATE INDEX idx_message_chat_id ON message (chat_id);
+CREATE INDEX idx_message_chat_id ON message (chat_id, id);
 CREATE INDEX idx_app_user_chat_user_id_peer_id ON app_user_chat (user_id, peer_id);
 
 -- changeset Sergey:7
