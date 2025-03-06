@@ -9,9 +9,10 @@ import java.util.UUID;
 public class LogUtil {
     public static final String REQUEST_ID = "requestId";
 
-    public static void addRequestId() {
+    public static String addRequestId() {
         var requestId = UUID.randomUUID().toString();
         MDC.put(REQUEST_ID, requestId);
+        return requestId;
     }
 
     public static void removeRequestId() {
