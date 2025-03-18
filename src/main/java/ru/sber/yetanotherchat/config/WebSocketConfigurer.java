@@ -45,6 +45,10 @@ public class WebSocketConfigurer implements WebSocketMessageBrokerConfigurer {
      * Префикс для общих тем.
      */
     public static final String TOPIC = "/topic";
+    /**
+     * Маршрут для обработки пользователей не подключенных к серверу.
+     */
+    public static final String UNRESOLVED_USER_DESTINATION = "/topic/unresolved-user-destination";
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -54,7 +58,8 @@ public class WebSocketConfigurer implements WebSocketMessageBrokerConfigurer {
                 .setClientLogin(properties.getUsername())
                 .setClientPasscode(properties.getPassword())
                 .setSystemLogin(properties.getUsername())
-                .setSystemPasscode(properties.getPassword());
+                .setSystemPasscode(properties.getPassword())
+                .setUserDestinationBroadcast(UNRESOLVED_USER_DESTINATION);
 
         config.setApplicationDestinationPrefixes(APP_DESTINATION_STOMP_PREFIX);
         config.setUserDestinationPrefix(USER_DESTINATION_STOMP_PREFIX);
